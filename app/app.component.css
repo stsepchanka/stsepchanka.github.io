@@ -1,0 +1,43 @@
+html {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+body {
+    margin: 0;
+}
+.main {
+    position: relative;
+    min-height: 100%;
+}
+.header {
+    position: fixed;
+    background-color: #1a9cb0;
+    color: #fff;
+    left: 0;
+    top: 0;
+    z-index: 1002;
+    height: 60px;
+    width: 100%;
+    font-size: 20px;
+}
+.header-image {
+    height: 40px;
+    padding: 10px;
+    float: left;
+}
+.header-menu {
+    padding-top: 17px;
+}
+.center {
+    padding: 60px 20px;
+}
+.footer {
+    height: 25px;
+    text-align: center;
+    background: #464547;
+    color: #fff;
+    padding: 17px 0 10px 0;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+}

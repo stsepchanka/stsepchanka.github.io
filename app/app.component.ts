@@ -1,10 +1,12 @@
 /// <reference path="../typings/index.d.ts" />
+///<reference path="../node_modules/@types/node/index.d.ts"/> 
 
 import {Component} from '@angular/core';
 
 @Component({
     selector: 'my-app',
-    template: `<h1>The weather is fine!</h1><img src="./../images/sun.png"/>`
+    templateUrl: './app/app.component.html',
+    styleUrls:  ['./app/app.component.css']
 })
 
 export class AppComponent {}
