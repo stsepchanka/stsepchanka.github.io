@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams } from '@angular/http';
-import { Observable }     from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
 
 import {CityCoordinates} from './../Entity/cityCoordinates';
 import {CitiesInCycle} from './../Entity/citiesInCycle';

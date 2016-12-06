@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import {CitiesService} from './cities.service';
-import {City} from './../Entity/city';
-import {CityCoordinates} from './../Entity/cityCoordinates';
+import { CitiesService } from './cities.service';
+import { AppService } from './../app.service';
+
+import { City } from './../Entity/city';
+import { CityCoordinates } from './../Entity/cityCoordinates';
 
 @Component({
     selector: 'cities',
@@ -14,19 +16,22 @@ import {CityCoordinates} from './../Entity/cityCoordinates';
 export class CitiesComponent implements OnInit {
 
     cities: City[];
-    mogilevCoord: CityCoordinates = {
-        lat: 53.913891,
-        lon: 30.33639
-    };
+    centerCoord: CityCoordinates;
 
-    constructor (private citiesService: CitiesService) {}
+    constructor (
+        private citiesService: CitiesService,
+        private appService: AppService
+    ) {}
 
     ngOnInit() { 
-        this.getCitiesWeather(); 
+        this.appService.getCenterCoord().subscribe(coord => {
+            this.centerCoord = coord;
+            this.getCitiesWeather(); 
+        })
     }
 
     getCitiesWeather() {
-        this.citiesService.getCitiesWeather(this.mogilevCoord)
+        this.citiesService.getCitiesWeather(this.centerCoord)
             .subscribe(cities => 
                 this.cities = cities
             );
