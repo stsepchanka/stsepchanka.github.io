@@ -7,7 +7,7 @@ import {CitiesInCycle} from './../Entity/citiesInCycle';
 import {City} from './../Entity/city';
 
 @Injectable()
-export class CitiesService {
+export class WeatherInCityService {
     private citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
     private countCities: number = 50;
     private appid: string = 'f3dbe2c418d2f197d570d0224966b043';
@@ -23,12 +23,12 @@ export class CitiesService {
 
         return this.http.get(this.citiesInCycleUrl, { search: params })
                     .map((result) => {
-                        let citiesInCycle: CitiesInCycle = result.json();
-                        let cities: City[] = citiesInCycle.list || [];
-                        cities.sort((city1, city2) => {
-                            return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
-                        });
-                        return cities;
-                    });
+                     let citiesInCycle: CitiesInCycle = result.json();
+                     let cities: City[] = citiesInCycle.list || [];
+                     cities.sort((city1, city2) => {
+                         return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
+                     });
+                     return cities;
+                });
     }
 }

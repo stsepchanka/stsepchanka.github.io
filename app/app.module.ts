@@ -15,11 +15,16 @@ import { AppComponent } from './app.component';
 import { CitiesComponent } from './cities/cities.component';
 import { CityComponent } from './city/city.component';
 import { MapComponent } from './map/map.component';
+import { WeatherInCityComponent } from './weatherInCity/weatherInCity.component';
 import { PageNotFoundComponent } from './pagenotfound/pagenotfound.component';
+
+import {Kelvin2celsiusPipe } from './Pipes/kelvin2celsius.pipe';
+import {TemperaturePipe } from './Pipes/temperature.pipe';
 
 const appRoutes: Routes = [
   { path: 'cities', component: CitiesComponent },
   { path: 'map', component: MapComponent },
+  { path: 'weather-in-city', component: WeatherInCityComponent },
   { path: '', component: CitiesComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
@@ -38,7 +43,10 @@ const appRoutes: Routes = [
     CitiesComponent,
     CityComponent,
     MapComponent,
-    PageNotFoundComponent
+    WeatherInCityComponent,
+    PageNotFoundComponent,
+    Kelvin2celsiusPipe,
+    TemperaturePipe
   ],
   bootstrap: [ AppComponent ]
 })

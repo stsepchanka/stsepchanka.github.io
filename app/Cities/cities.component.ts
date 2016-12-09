@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 
 import { CitiesService } from './cities.service';
 import { AppService } from './../app.service';
@@ -15,8 +16,9 @@ import { CityCoordinates } from './../Entity/cityCoordinates';
 
 export class CitiesComponent implements OnInit {
 
-    cities: City[];
+    cities: Observable<City[]>;
     centerCoord: CityCoordinates;
+    firstLetter: string = '';
 
     constructor (
         private citiesService: CitiesService,
@@ -26,14 +28,24 @@ export class CitiesComponent implements OnInit {
     ngOnInit() { 
         this.appService.getCenterCoord().subscribe(coord => {
             this.centerCoord = coord;
-            this.getCitiesWeather(); 
+            //this.getCitiesWeather();
+            this.cities = this.citiesService.getCitiesWeather(this.centerCoord); 
         })
     }
 
-    getCitiesWeather() {
-        this.citiesService.getCitiesWeather(this.centerCoord)
-            .subscribe(cities => 
-                this.cities = cities
-            );
+    isNewLetter(letter: string): boolean {
+        let isDifferent: boolean = this.firstLetter !== letter;
+        this.firstLetter = letter;
+        return isDifferent;
     }
+
+    // getCitiesWeather() {
+    //     this.citiesService.getCitiesWeather(this.centerCoord)
+    //         .subscribe(cities => {
+    //             this.cities = cities;
+    //             this.cities.sort((city1, city2) => {
+    //                 return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
+    //             });
+    //         });
+    // }
 }

@@ -1,3 +1,5 @@
-cities {
-    display: flex;
+.cities {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 1220px;
 }

@@ -1,19 +1,23 @@
 import {Component, Input} from '@angular/core';
 
 import {City} from './../Entity/city';
+import {Kelvin2celsiusPipe} from './../Pipes/kelvin2celsius.pipe';
 
 @Component({
     selector: 'city',
+    providers: [Kelvin2celsiusPipe],
     templateUrl: './app/City/city.component.html',
     styleUrls: ['./app/City/city.component.css']
 })
 
 export class CityComponent {
     @Input() city: City;
+    @Input() isDisplayLetter: Boolean;
 
-    kelvin2celsius:number = 273.15;
+    constructor(private kelvin2celsius: Kelvin2celsiusPipe) {}
 
-    getTempCelsius(tempKelvin: number):number {
-        return tempKelvin- this.kelvin2celsius;
+    getClassColor(tempKelvin: number):string {
+        let tempCelsius: number = this.kelvin2celsius.transform(tempKelvin);
+        return tempCelsius > 0 ? 'red' : 'blue';
     }
 }

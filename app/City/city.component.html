@@ -1,4 +1,5 @@
+<div *ngIf="isDisplayLetter" class="city-letter">{{ city.name[0] }}</div>
 <div class='cities-city'>
-    <span class='cities-city-name'>{{city.name}}</span>
-    <span class='cities-city-temp'>{{getTempCelsius(city.main.temp) | number}}</span>
+    <span class="cities-city-temp" [ngClass]="getClassColor(city.main.temp)">{{ city.main.temp | kelvin2celsius | temperature }}</span>
+    <span class="cities-city-name">{{ city.name }}</span>
 </div>
