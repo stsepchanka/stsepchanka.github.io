@@ -1,13 +1,13 @@
 import {Component, Input} from '@angular/core';
 
-import {City} from './../Entity/city';
-import {Kelvin2celsiusPipe} from './../Pipes/kelvin2celsius.pipe';
+import {City} from './../../Entities/city';
+import {Kelvin2celsiusPipe} from './../../Pipes/kelvin2celsius.pipe';
 
 @Component({
     selector: 'city',
     providers: [Kelvin2celsiusPipe],
-    templateUrl: './app/City/city.component.html',
-    styleUrls: ['./app/City/city.component.css']
+    templateUrl: './app/Components/City/city.component.html',
+    styleUrls: ['./app/Components/City/city.component.css']
 })
 
 export class CityComponent {

@@ -35,12 +35,12 @@ webpackJsonp([0],{
 	var core_2 = __webpack_require__(354);
 	var app_component_1 = __webpack_require__(375);
 	var cities_component_1 = __webpack_require__(378);
-	var city_component_1 = __webpack_require__(380);
-	var map_component_1 = __webpack_require__(383);
-	var weatherInCity_component_1 = __webpack_require__(384);
-	var pagenotfound_component_1 = __webpack_require__(386);
-	var kelvin2celsius_pipe_1 = __webpack_require__(382);
-	var temperature_pipe_1 = __webpack_require__(387);
+	var city_component_1 = __webpack_require__(379);
+	var map_component_1 = __webpack_require__(382);
+	var weatherInCity_component_1 = __webpack_require__(383);
+	var pagenotfound_component_1 = __webpack_require__(384);
+	var kelvin2celsius_pipe_1 = __webpack_require__(381);
+	var temperature_pipe_1 = __webpack_require__(385);
 	var appRoutes = [
 	    { path: 'cities', component: cities_component_1.CitiesComponent },
 	    { path: 'map', component: map_component_1.MapComponent },
@@ -2277,20 +2277,18 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var app_service_1 = __webpack_require__(376);
+	var weather_service_1 = __webpack_require__(376);
 	var AppComponent = (function () {
-	    function AppComponent(appService) {
-	        this.appService = appService;
-	        appService.setCenterCoord();
+	    function AppComponent() {
 	    }
 	    AppComponent = __decorate([
 	        core_1.Component({
 	            selector: 'my-app',
-	            providers: [app_service_1.AppService],
+	            providers: [weather_service_1.WeatherService],
 	            templateUrl: './app/app.component.html',
 	            styleUrls: ['./app/app.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [app_service_1.AppService])
+	        __metadata('design:paramtypes', [])
 	    ], AppComponent);
 	    return AppComponent;
 	}());
@@ -2313,29 +2311,69 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
+	var http_1 = __webpack_require__(56);
 	var Observable_1 = __webpack_require__(5);
 	var cityCoordinates_1 = __webpack_require__(377);
-	var AppService = (function () {
-	    function AppService() {
+	var WeatherService = (function () {
+	    function WeatherService(http) {
+	        this.http = http;
+	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
+	        this.countCities = 50;
+	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
+	        this.centerCoord = null;
+	        this.cities = null;
+	        this.timeRequest = null;
 	    }
-	    AppService.prototype.setCenterCoord = function () {
-	        this.centerCoord = new Observable_1.Observable(function (observer) {
-	            navigator.geolocation.getCurrentPosition(function (position) {
-	                observer.next(new cityCoordinates_1.CityCoordinates(position.coords.latitude, position.coords.longitude));
+	    WeatherService.prototype.getCenterCoord = function () {
+	        var _this = this;
+	        return new Observable_1.Observable(function (observer) {
+	            if (_this.centerCoord == null) {
+	                navigator.geolocation.getCurrentPosition(function (position) {
+	                    _this.centerCoord = new cityCoordinates_1.CityCoordinates(position.coords.latitude, position.coords.longitude);
+	                    observer.next(_this.centerCoord);
+	                    observer.complete();
+	                });
+	            }
+	            else {
+	                observer.next(_this.centerCoord);
 	                observer.complete();
-	            });
+	            }
 	        });
 	    };
-	    AppService.prototype.getCenterCoord = function () {
-	        return this.centerCoord;
+	    WeatherService.prototype.getCitiesWeather = function (centerCoord) {
+	        var _this = this;
+	        if (this.cities == null
+	            || (new Date()).getTime() - this.timeRequest.getTime() > 10 * 60 * 1000) {
+	            var params = new http_1.URLSearchParams();
+	            params.set('lat', centerCoord.lat.toString());
+	            params.set('lon', centerCoord.lon.toString());
+	            params.set('cnt', this.countCities.toString());
+	            params.set('appid', this.appid);
+	            return this.http.get(this.citiesInCycleUrl, { search: params })
+	                .map(function (result) {
+	                var citiesInCycle = result.json();
+	                _this.cities = citiesInCycle.list || [];
+	                _this.cities.sort(function (city1, city2) {
+	                    return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
+	                });
+	                _this.timeRequest = new Date();
+	                return _this.cities;
+	            });
+	        }
+	        else {
+	            return new Observable_1.Observable(function (observer) {
+	                observer.next(_this.cities);
+	                observer.complete();
+	            });
+	        }
 	    };
-	    AppService = __decorate([
+	    WeatherService = __decorate([
 	        core_1.Injectable(), 
-	        __metadata('design:paramtypes', [])
-	    ], AppService);
-	    return AppService;
+	        __metadata('design:paramtypes', [http_1.Http])
+	    ], WeatherService);
+	    return WeatherService;
 	}());
-	exports.AppService = AppService;
+	exports.WeatherService = WeatherService;
 
 
 /***/ },
@@ -2370,20 +2408,17 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var cities_service_1 = __webpack_require__(379);
-	var app_service_1 = __webpack_require__(376);
+	var weather_service_1 = __webpack_require__(376);
 	var CitiesComponent = (function () {
-	    function CitiesComponent(citiesService, appService) {
-	        this.citiesService = citiesService;
-	        this.appService = appService;
+	    function CitiesComponent(weatherService) {
+	        this.weatherService = weatherService;
 	        this.firstLetter = '';
 	    }
 	    CitiesComponent.prototype.ngOnInit = function () {
 	        var _this = this;
-	        this.appService.getCenterCoord().subscribe(function (coord) {
+	        this.weatherService.getCenterCoord().subscribe(function (coord) {
 	            _this.centerCoord = coord;
-	            //this.getCitiesWeather();
-	            _this.cities = _this.citiesService.getCitiesWeather(_this.centerCoord);
+	            _this.cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
 	        });
 	    };
 	    CitiesComponent.prototype.isNewLetter = function (letter) {
@@ -2394,11 +2429,10 @@ webpackJsonp([0],{
 	    CitiesComponent = __decorate([
 	        core_1.Component({
 	            selector: 'cities',
-	            providers: [cities_service_1.CitiesService],
-	            templateUrl: './app/Cities/cities.component.html',
-	            styleUrls: ['./app/Cities/cities.component.css']
+	            templateUrl: './app/Components/Cities/cities.component.html',
+	            styleUrls: ['./app/Components/Cities/cities.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [cities_service_1.CitiesService, app_service_1.AppService])
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
 	    ], CitiesComponent);
 	    return CitiesComponent;
 	}());
@@ -2421,57 +2455,8 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var http_1 = __webpack_require__(56);
-	var CitiesService = (function () {
-	    function CitiesService(http) {
-	        this.http = http;
-	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
-	        this.countCities = 50;
-	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
-	    }
-	    CitiesService.prototype.getCitiesWeather = function (centerCoord) {
-	        var params = new http_1.URLSearchParams();
-	        params.set('lat', centerCoord.lat.toString());
-	        params.set('lon', centerCoord.lon.toString());
-	        params.set('cnt', this.countCities.toString());
-	        params.set('appid', this.appid);
-	        return this.http.get(this.citiesInCycleUrl, { search: params })
-	            .map(function (result) {
-	            var citiesInCycle = result.json();
-	            var cities = citiesInCycle.list || [];
-	            cities.sort(function (city1, city2) {
-	                return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
-	            });
-	            return cities;
-	        });
-	    };
-	    CitiesService = __decorate([
-	        core_1.Injectable(), 
-	        __metadata('design:paramtypes', [http_1.Http])
-	    ], CitiesService);
-	    return CitiesService;
-	}());
-	exports.CitiesService = CitiesService;
-
-
-/***/ },
-
-/***/ 380:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var city_1 = __webpack_require__(381);
-	var kelvin2celsius_pipe_1 = __webpack_require__(382);
+	var city_1 = __webpack_require__(380);
+	var kelvin2celsius_pipe_1 = __webpack_require__(381);
 	var CityComponent = (function () {
 	    function CityComponent(kelvin2celsius) {
 	        this.kelvin2celsius = kelvin2celsius;
@@ -2492,8 +2477,8 @@ webpackJsonp([0],{
 	        core_1.Component({
 	            selector: 'city',
 	            providers: [kelvin2celsius_pipe_1.Kelvin2celsiusPipe],
-	            templateUrl: './app/City/city.component.html',
-	            styleUrls: ['./app/City/city.component.css']
+	            templateUrl: './app/Components/City/city.component.html',
+	            styleUrls: ['./app/Components/City/city.component.css']
 	        }), 
 	        __metadata('design:paramtypes', [kelvin2celsius_pipe_1.Kelvin2celsiusPipe])
 	    ], CityComponent);
@@ -2504,7 +2489,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 381:
+/***/ 380:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2518,7 +2503,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 382:
+/***/ 381:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2550,6 +2535,46 @@ webpackJsonp([0],{
 
 /***/ },
 
+/***/ 382:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var weather_service_1 = __webpack_require__(376);
+	var cityCoordinates_1 = __webpack_require__(377);
+	var MapComponent = (function () {
+	    function MapComponent(weatherService) {
+	        var _this = this;
+	        this.weatherService = weatherService;
+	        this.centerCoord = new cityCoordinates_1.CityCoordinates(0, 0);
+	        weatherService.getCenterCoord().subscribe(function (coord) {
+	            _this.centerCoord = coord;
+	        });
+	    }
+	    MapComponent = __decorate([
+	        core_1.Component({
+	            selector: 'map',
+	            templateUrl: './app/Components/Map/map.component.html',
+	            styleUrls: ['./app/Components/Map/map.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
+	    ], MapComponent);
+	    return MapComponent;
+	}());
+	exports.MapComponent = MapComponent;
+
+
+/***/ },
+
 /***/ 383:
 /***/ function(module, exports, __webpack_require__) {
 
@@ -2564,59 +2589,18 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var app_service_1 = __webpack_require__(376);
-	var cityCoordinates_1 = __webpack_require__(377);
-	var MapComponent = (function () {
-	    function MapComponent(appService) {
-	        var _this = this;
-	        this.appService = appService;
-	        this.centerCoord = new cityCoordinates_1.CityCoordinates(0, 0);
-	        appService.getCenterCoord().subscribe(function (coord) {
-	            _this.centerCoord = coord;
-	        });
-	    }
-	    MapComponent = __decorate([
-	        core_1.Component({
-	            selector: 'map',
-	            templateUrl: './app/Map/map.component.html',
-	            styleUrls: ['./app/Map/map.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [app_service_1.AppService])
-	    ], MapComponent);
-	    return MapComponent;
-	}());
-	exports.MapComponent = MapComponent;
-
-
-/***/ },
-
-/***/ 384:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var cities_service_1 = __webpack_require__(385);
+	var weather_service_1 = __webpack_require__(376);
 	var WeatherInCityComponent = (function () {
-	    function WeatherInCityComponent(citiesService) {
-	        this.citiesService = citiesService;
+	    function WeatherInCityComponent(weatherService) {
+	        this.weatherService = weatherService;
 	    }
 	    WeatherInCityComponent = __decorate([
 	        core_1.Component({
 	            selector: 'weather-in-city',
-	            providers: [cities_service_1.CitiesService],
-	            templateUrl: './app/WeatherInCity/weatherInCity.component.html',
-	            styleUrls: ['./app/WeatherInCity/weatherInCity.component.css']
+	            templateUrl: './app/Components/WeatherInCity/weatherInCity.component.html',
+	            styleUrls: ['./app/Components/WeatherInCity/weatherInCity.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [cities_service_1.CitiesService])
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
 	    ], WeatherInCityComponent);
 	    return WeatherInCityComponent;
 	}());
@@ -2625,56 +2609,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 385:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var http_1 = __webpack_require__(56);
-	var CitiesService = (function () {
-	    function CitiesService(http) {
-	        this.http = http;
-	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
-	        this.countCities = 50;
-	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
-	    }
-	    CitiesService.prototype.getCitiesWeather = function (centerCoord) {
-	        var params = new http_1.URLSearchParams();
-	        params.set('lat', centerCoord.lat.toString());
-	        params.set('lon', centerCoord.lon.toString());
-	        params.set('cnt', this.countCities.toString());
-	        params.set('appid', this.appid);
-	        return this.http.get(this.citiesInCycleUrl, { search: params })
-	            .map(function (result) {
-	            var citiesInCycle = result.json();
-	            var cities = citiesInCycle.list || [];
-	            cities.sort(function (city1, city2) {
-	                return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
-	            });
-	            return cities;
-	        });
-	    };
-	    CitiesService = __decorate([
-	        core_1.Injectable(), 
-	        __metadata('design:paramtypes', [http_1.Http])
-	    ], CitiesService);
-	    return CitiesService;
-	}());
-	exports.CitiesService = CitiesService;
-
-
-/***/ },
-
-/***/ 386:
+/***/ 384:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2705,7 +2640,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 387:
+/***/ 385:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";

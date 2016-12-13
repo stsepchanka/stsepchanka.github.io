@@ -4,19 +4,13 @@
 
 import { Component } from '@angular/core';
 
-import { AppService } from './app.service';
+import { WeatherService } from './Services/weather.service';
 
 @Component({
     selector: 'my-app',
-    providers: [AppService],
+    providers: [WeatherService],
     templateUrl: './app/app.component.html',
     styleUrls:  ['./app/app.component.css']
 })
 
-export class AppComponent {
-
-    constructor(private appService: AppService) {
-        appService.setCenterCoord();
-    }
-
-}
+export class AppComponent {}

@@ -8,8 +8,7 @@ html {
 }
 .header {
     position: fixed;
-    background-color: #39C2D7;
-    color: #fff;
+    background-color: #39c2d7;
     left: 0;
     top: 0;
     z-index: 1002;
@@ -22,8 +21,14 @@ html {
     padding: 10px;
     float: left;
 }
-.header-menu {
-    padding-top: 17px;
+.header-menu-link {
+    padding: 18px 10px;
+    color: #fff;
+    display: inline-block;
+    text-decoration: none;
+}
+.header-menu-link:hover {
+    background-color: #1a9cb0;
 }
 .center {
     padding: 70px 20px 62px;

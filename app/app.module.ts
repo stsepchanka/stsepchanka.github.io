@@ -12,11 +12,11 @@ import 'rxjs/Rx';
 import { AgmCoreModule } from 'angular2-google-maps/core';
 
 import { AppComponent } from './app.component';
-import { CitiesComponent } from './cities/cities.component';
-import { CityComponent } from './city/city.component';
-import { MapComponent } from './map/map.component';
-import { WeatherInCityComponent } from './weatherInCity/weatherInCity.component';
-import { PageNotFoundComponent } from './pagenotfound/pagenotfound.component';
+import { CitiesComponent } from './Components/Cities/cities.component';
+import { CityComponent } from './Components/City/city.component';
+import { MapComponent } from './Components/Map/map.component';
+import { WeatherInCityComponent } from './Components/WeatherInCity/weatherInCity.component';
+import { PageNotFoundComponent } from './Components/PageNotFound/pagenotfound.component';
 
 import {Kelvin2celsiusPipe } from './Pipes/kelvin2celsius.pipe';
 import {TemperaturePipe } from './Pipes/temperature.pipe';
