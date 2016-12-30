@@ -17,6 +17,7 @@ export class CitiesComponent implements OnInit {
     cities: Observable<City[]>;
     centerCoord: CityCoordinates;
     firstLetter: string = '';
+    timeRequest:Date;
 
     constructor (
         private weatherService: WeatherService
@@ -25,7 +26,10 @@ export class CitiesComponent implements OnInit {
     ngOnInit() { 
         this.weatherService.getCenterCoord().subscribe(coord => {
             this.centerCoord = coord;
-            this.cities = this.weatherService.getCitiesWeather(this.centerCoord); 
+            this.cities = this.weatherService.getCitiesWeather(this.centerCoord);
+            this.weatherService.getCitiesWeather(this.centerCoord).subscribe(() => {
+                this.timeRequest = this.weatherService.timeLastRequest; 
+            })
         })
     }
 

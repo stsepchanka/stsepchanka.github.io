@@ -20,12 +20,13 @@ import { PageNotFoundComponent } from './Components/PageNotFound/pagenotfound.co
 
 import {Kelvin2celsiusPipe } from './Pipes/kelvin2celsius.pipe';
 import {TemperaturePipe } from './Pipes/temperature.pipe';
+import {WeatherPipe } from './Pipes/weather.pipe';
 
 const appRoutes: Routes = [
   { path: 'cities', component: CitiesComponent },
   { path: 'map', component: MapComponent },
   { path: 'weather-in-city', component: WeatherInCityComponent },
-  { path: '', component: CitiesComponent },
+  { path: '', component: WeatherInCityComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 
@@ -46,7 +47,8 @@ const appRoutes: Routes = [
     WeatherInCityComponent,
     PageNotFoundComponent,
     Kelvin2celsiusPipe,
-    TemperaturePipe
+    TemperaturePipe,
+    WeatherPipe
   ],
   bootstrap: [ AppComponent ]
 })

@@ -11,5 +11,5 @@ export class City {
     main: WeatherMain;
     wind: Wind;
     clouds: Cloud;
-    weather: WeatherMain[];
+    weather: WeatherDescription[];
 }

@@ -1,7 +1,7 @@
-import {Component, Input} from '@angular/core';
+import { Component, Input } from '@angular/core';
 
-import {City} from './../../Entities/city';
-import {Kelvin2celsiusPipe} from './../../Pipes/kelvin2celsius.pipe';
+import { City } from './../../Entities/city';
+import { Kelvin2celsiusPipe } from './../../Pipes/kelvin2celsius.pipe';
 
 @Component({
     selector: 'city',

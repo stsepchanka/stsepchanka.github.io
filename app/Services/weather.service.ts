@@ -9,6 +9,7 @@ import { City } from './../Entities/city';
 @Injectable()
 export class WeatherService {
     private citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
+    private citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
     private countCities: number = 50;
     private appid: string = 'f3dbe2c418d2f197d570d0224966b043';
 
@@ -20,6 +21,10 @@ export class WeatherService {
         this.centerCoord = null;
         this.cities = null;
         this.timeRequest = null;
+    }
+
+    get timeLastRequest(): Date {
+        return this.timeRequest;
     }
 
     getCenterCoord(): Observable<CityCoordinates> {
@@ -69,4 +74,16 @@ export class WeatherService {
         }
     }
 
+    getCityWeatherByName(cityName: string): Observable<City> {
+        let params = new URLSearchParams();
+            params.set('q', cityName);
+            params.set('units', 'metric');
+            params.set('appid', this.appid);
+
+        return this.http.get(this.citiyWeatherByNameUrl, { search: params })
+                        .map((result) => {
+                            let city: City = result.json();
+                            return city;
+                        });
+    }
 }

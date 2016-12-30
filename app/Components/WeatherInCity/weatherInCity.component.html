@@ -1,1 +1,39 @@
-There will be weather in the specified city
+<h2>Weather In City </h2>    
+<div>
+    <label>City: </label>
+    <input class="weather-cityname" #name placeholder="City name"/>
+    <button (click)="refreshName(name.value)">Get weather</button>
+</div>
+<div [innerHTML]="cityName | weather"></div>
+<!--<table>
+    <caption>
+        <div>Weather in {{ cityName }}</div>
+        <div>Last refreshed {{ timeRequest | date:'dd.MM.yyyy hh:mm' }}</div>
+    </caption>
+    <tbody>
+        <tr>
+            <td>Temperature</td>
+            <td>{{ city.weather.temp }}</td>
+        </tr>
+        <tr>
+            <td>Wind</td>
+            <td>{{ city.wind.speed }}</td>
+        </tr>
+        <tr>
+            <td>Cloudiness</td>
+            <td>{{ city.clouds.all }}</td>
+        </tr>
+        <tr>
+            <td>Pressure</td>
+            <td>{{ city.weather.pressure }}</td>
+        </tr>
+        <tr>
+            <td>Humidity</td>
+            <td>{{ city.weather.humidity }}</td>
+        </tr>
+        <tr>
+            <td>Geo coordinates</td>
+            <td>[{{ city.coord.lat }}, {{ city.coord.lon }}]</td>
+        </tr>
+    </tbody>
+</table>-->

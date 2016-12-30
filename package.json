@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "typings install",
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack"
   },
   "dependencies": {
     "@angular/common": "~2.2.0",

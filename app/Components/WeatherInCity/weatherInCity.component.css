@@ -1,0 +1,13 @@
+.weather-cityname {
+    margin-bottom: 20px;
+}
+.weather-table-caption {
+    font-weight: bold;
+}
+.weather-table-tr:nth-child(odd) td {
+    background-color: #f9f9f9;
+}
+.weather-table, .weather-table td {
+    border: 1px solid #ddd;
+    padding: 5px;
+}

@@ -27,9 +27,12 @@ html {
     display: inline-block;
     text-decoration: none;
 }
-.header-menu-link:hover {
+.header-menu-link:hover, .header-menu-link:active, .header-menu-link:focus {
     background-color: #1a9cb0;
 }
+/*.header-time {
+    float: right;
+}*/
 .center {
     padding: 70px 20px 62px;
 }

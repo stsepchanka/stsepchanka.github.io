@@ -41,11 +41,12 @@ webpackJsonp([0],{
 	var pagenotfound_component_1 = __webpack_require__(384);
 	var kelvin2celsius_pipe_1 = __webpack_require__(381);
 	var temperature_pipe_1 = __webpack_require__(385);
+	var weather_pipe_1 = __webpack_require__(386);
 	var appRoutes = [
 	    { path: 'cities', component: cities_component_1.CitiesComponent },
 	    { path: 'map', component: map_component_1.MapComponent },
 	    { path: 'weather-in-city', component: weatherInCity_component_1.WeatherInCityComponent },
-	    { path: '', component: cities_component_1.CitiesComponent },
+	    { path: '', component: weatherInCity_component_1.WeatherInCityComponent },
 	    { path: '**', component: pagenotfound_component_1.PageNotFoundComponent }
 	];
 	var AppModule = (function () {
@@ -69,7 +70,8 @@ webpackJsonp([0],{
 	                weatherInCity_component_1.WeatherInCityComponent,
 	                pagenotfound_component_1.PageNotFoundComponent,
 	                kelvin2celsius_pipe_1.Kelvin2celsiusPipe,
-	                temperature_pipe_1.TemperaturePipe
+	                temperature_pipe_1.TemperaturePipe,
+	                weather_pipe_1.WeatherPipe
 	            ],
 	            bootstrap: [app_component_1.AppComponent]
 	        }), 
@@ -2318,12 +2320,20 @@ webpackJsonp([0],{
 	    function WeatherService(http) {
 	        this.http = http;
 	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
+	        this.citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
 	        this.countCities = 50;
 	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
 	        this.centerCoord = null;
 	        this.cities = null;
 	        this.timeRequest = null;
 	    }
+	    Object.defineProperty(WeatherService.prototype, "timeLastRequest", {
+	        get: function () {
+	            return this.timeRequest;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
 	    WeatherService.prototype.getCenterCoord = function () {
 	        var _this = this;
 	        return new Observable_1.Observable(function (observer) {
@@ -2366,6 +2376,17 @@ webpackJsonp([0],{
 	                observer.complete();
 	            });
 	        }
+	    };
+	    WeatherService.prototype.getCityWeatherByName = function (cityName) {
+	        var params = new http_1.URLSearchParams();
+	        params.set('q', cityName);
+	        params.set('units', 'metric');
+	        params.set('appid', this.appid);
+	        return this.http.get(this.citiyWeatherByNameUrl, { search: params })
+	            .map(function (result) {
+	            var city = result.json();
+	            return city;
+	        });
 	    };
 	    WeatherService = __decorate([
 	        core_1.Injectable(), 
@@ -2419,6 +2440,9 @@ webpackJsonp([0],{
 	        this.weatherService.getCenterCoord().subscribe(function (coord) {
 	            _this.centerCoord = coord;
 	            _this.cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
+	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function () {
+	                _this.timeRequest = _this.weatherService.timeLastRequest;
+	            });
 	        });
 	    };
 	    CitiesComponent.prototype.isNewLetter = function (letter) {
@@ -2589,18 +2613,21 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
 	var WeatherInCityComponent = (function () {
-	    function WeatherInCityComponent(weatherService) {
-	        this.weatherService = weatherService;
+	    function WeatherInCityComponent() {
 	    }
+	    WeatherInCityComponent.prototype.refreshName = function (cityName) {
+	        if (cityName) {
+	            this.cityName = cityName;
+	        }
+	    };
 	    WeatherInCityComponent = __decorate([
 	        core_1.Component({
 	            selector: 'weather-in-city',
 	            templateUrl: './app/Components/WeatherInCity/weatherInCity.component.html',
 	            styleUrls: ['./app/Components/WeatherInCity/weatherInCity.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
+	        __metadata('design:paramtypes', [])
 	    ], WeatherInCityComponent);
 	    return WeatherInCityComponent;
 	}());
@@ -2667,6 +2694,78 @@ webpackJsonp([0],{
 	    return TemperaturePipe;
 	}());
 	exports.TemperaturePipe = TemperaturePipe;
+
+
+/***/ },
+
+/***/ 386:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var weather_service_1 = __webpack_require__(376);
+	var CityWeather = (function () {
+	    function CityWeather(name, city, timeRequest, isRequestGoes) {
+	        if (city === void 0) { city = null; }
+	        if (timeRequest === void 0) { timeRequest = null; }
+	        if (isRequestGoes === void 0) { isRequestGoes = false; }
+	        this.name = name;
+	        this.city = city;
+	        this.timeRequest = timeRequest;
+	        this.isRequestGoes = isRequestGoes;
+	    }
+	    return CityWeather;
+	}());
+	var WeatherPipe = (function () {
+	    function WeatherPipe(weatherService) {
+	        this.weatherService = weatherService;
+	        this.cities = [];
+	    }
+	    WeatherPipe.prototype.transform = function (value) {
+	        var resultHtml = '';
+	        if (value) {
+	            value = value.trim().toUpperCase();
+	            var cityWeather_1 = this.cities.find(function (cw) { return cw.name === value; });
+	            if (!cityWeather_1) {
+	                cityWeather_1 = new CityWeather(value);
+	                this.cities.push(cityWeather_1);
+	            }
+	            if (!cityWeather_1.isRequestGoes && (!cityWeather_1.timeRequest || (new Date()).getTime() - cityWeather_1.timeRequest.getTime() > 10 * 60 * 1000)) {
+	                cityWeather_1.isRequestGoes = true;
+	                this.weatherService.getCityWeatherByName(value).subscribe(function (city) {
+	                    cityWeather_1.timeRequest = new Date();
+	                    cityWeather_1.city = city;
+	                    cityWeather_1.isRequestGoes = false;
+	                });
+	            }
+	            if (cityWeather_1 && cityWeather_1.city) {
+	                resultHtml = "<table class=\"weather-table\">\n                                <caption class=\"weather-table-caption\">\n                                    <div>Weather in " + cityWeather_1.city.name + "</div>\n                                    <div>Last refreshed " + (('0' + cityWeather_1.timeRequest.getHours().toString()).slice(-2) + ':' + ('0' + cityWeather_1.timeRequest.getMinutes().toString()).slice(-2)) + "</div>\n                                </caption>\n                                <tbody>\n                                    <tr class=\"weather-table-tr\">\n                                        <td>Temperature</td>\n                                        <td>" + cityWeather_1.city.main.temp.toFixed(0) + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Wind</td>\n                                        <td>" + cityWeather_1.city.wind.speed + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Cloudiness</td>\n                                        <td>" + cityWeather_1.city.clouds.all + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Pressure</td>\n                                        <td>" + cityWeather_1.city.main.pressure + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Humidity</td>\n                                        <td>" + cityWeather_1.city.main.humidity + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Geo coordinates</td>\n                                        <td>[" + cityWeather_1.city.coord.lat.toFixed(2) + ", " + cityWeather_1.city.coord.lon.toFixed(2) + "]</td>\n                                    </tr>\n                                </tbody>\n                            </table>";
+	            }
+	            else {
+	                resultHtml = '<div class="nodata">No data</div>';
+	            }
+	        }
+	        return resultHtml;
+	    };
+	    WeatherPipe = __decorate([
+	        core_1.Pipe({
+	            name: 'weather',
+	            pure: false
+	        }), 
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
+	    ], WeatherPipe);
+	    return WeatherPipe;
+	}());
+	exports.WeatherPipe = WeatherPipe;
 
 
 /***/ }

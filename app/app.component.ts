@@ -13,4 +13,12 @@ import { WeatherService } from './Services/weather.service';
     styleUrls:  ['./app/app.component.css']
 })
 
-export class AppComponent {}
+export class AppComponent {
+
+  //  timeRequest:Date;
+
+  //  constructor(private weatherService: WeatherService){
+  //      this.timeRequest = this.weatherService.timeLastRequest;
+  //  }
+
+}

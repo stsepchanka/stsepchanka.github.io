@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
-import { WeatherService } from './../../Services/weather.service';
-
 import { City } from './../../Entities/city';
 import { CityCoordinates } from './../../Entities/cityCoordinates';
 
@@ -14,7 +12,11 @@ import { CityCoordinates } from './../../Entities/cityCoordinates';
 
 export class WeatherInCityComponent {
 
-    constructor (
-        private weatherService: WeatherService
-    ) {}
+    cityName: string;
+
+    refreshName(cityName: string):void {
+        if (cityName) {
+            this.cityName = cityName;
+        }
+    } 
 }
