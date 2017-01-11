@@ -2292,8 +2292,21 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(3);
 	var weather_service_1 = __webpack_require__(376);
 	var AppComponent = (function () {
-	    function AppComponent() {
+	    function AppComponent(zone, changeDetectorRef) {
+	        this.zone = zone;
+	        this.changeDetectorRef = changeDetectorRef;
+	        this.timeGetStable = 0;
+	        this.timeStartTask = new Date();
 	    }
+	    AppComponent.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.zone.onUnstable.subscribe(function () {
+	            _this.timeStartTask = new Date();
+	        });
+	        this.zone.onStable.subscribe(function () {
+	            _this.timeGetStable = (new Date()).getTime() - _this.timeStartTask.getTime();
+	        });
+	    };
 	    AppComponent = __decorate([
 	        core_1.Component({
 	            selector: 'my-app',
@@ -2301,7 +2314,7 @@ webpackJsonp([0],{
 	            templateUrl: './app/app.component.html',
 	            styleUrls: ['./app/app.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [])
+	        __metadata('design:paramtypes', [core_1.NgZone, core_1.ChangeDetectorRef])
 	    ], AppComponent);
 	    return AppComponent;
 	}());
@@ -2335,6 +2348,7 @@ webpackJsonp([0],{
 	        this.citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
 	        this.countCities = 50;
 	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
+	        this.refreshDataTime = 10 * 60 * 1000;
 	        this.centerCoord = null;
 	        this.cities = null;
 	        this.timeRequest = null;
@@ -2373,7 +2387,7 @@ webpackJsonp([0],{
 	    WeatherService.prototype.getCitiesWeather = function (centerCoord) {
 	        var _this = this;
 	        if (this.cities == null
-	            || (new Date()).getTime() - this.timeRequest.getTime() > 10 * 60 * 1000) {
+	            || (new Date()).getTime() - this.timeRequest.getTime() > this.refreshDataTime) {
 	            var params = new http_1.URLSearchParams();
 	            params.set('lat', centerCoord.lat.toString());
 	            params.set('lon', centerCoord.lon.toString());
@@ -2400,7 +2414,7 @@ webpackJsonp([0],{
 	    };
 	    WeatherService.prototype.getCitiesWeatherByIds = function (cities) {
 	        var _this = this;
-	        if ((new Date()).getTime() - this.timeRequestIds.getTime() < 2 * 60 * 1000) {
+	        if ((new Date()).getTime() - this.timeRequestIds.getTime() < this.refreshDataTime) {
 	            return new Observable_1.Observable(function (observer) {
 	                observer.next(cities);
 	                observer.complete();
@@ -2485,6 +2499,7 @@ webpackJsonp([0],{
 	        this.changeDetector = changeDetector;
 	        this.firstLetter = '';
 	        this.favoriteId = -1;
+	        this.isContinueRefresh = true;
 	    }
 	    CitiesComponent.prototype.ngOnInit = function () {
 	        var _this = this;
@@ -2496,17 +2511,19 @@ webpackJsonp([0],{
 	                _this.changeDetector.markForCheck();
 	                //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
 	                var self = _this;
-	                var timerId = setTimeout(function tick() {
+	                self.timerRefreshId = setTimeout(function tick() {
 	                    self.weatherService.getCitiesWeatherByIds(self.cities).subscribe(function (cities) {
-	                        cities.forEach(function (city) {
-	                            var index = self.cities.findIndex(function (c) { return c.id === city.id; });
-	                            if (index > -1) {
-	                                self.cities[index] = Object.assign({}, city);
-	                            }
-	                        });
-	                        self.timeRequest = self.weatherService.timeLastRequestIds;
-	                        timerId = setTimeout(tick, 5000);
-	                        self.changeDetector.markForCheck();
+	                        if (self.isContinueRefresh) {
+	                            cities.forEach(function (city) {
+	                                var index = self.cities.findIndex(function (c) { return c.id === city.id; });
+	                                if (index > -1) {
+	                                    self.cities[index] = Object.assign({}, city);
+	                                }
+	                            });
+	                            self.timeRequest = self.weatherService.timeLastRequestIds;
+	                            self.timerRefreshId = setTimeout(tick, 5000);
+	                            self.changeDetector.markForCheck();
+	                        }
 	                    });
 	                }, 5000);
 	            });
@@ -2549,6 +2566,10 @@ webpackJsonp([0],{
 	                }
 	            });
 	        }
+	    };
+	    CitiesComponent.prototype.ngOnDestroy = function () {
+	        clearTimeout(this.timerRefreshId);
+	        this.isContinueRefresh = false;
 	    };
 	    CitiesComponent = __decorate([
 	        core_1.Component({

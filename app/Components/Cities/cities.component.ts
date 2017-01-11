@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
 import { WeatherService } from './../../Services/weather.service';
@@ -13,13 +13,15 @@ import { CityCoordinates } from './../../Entities/cityCoordinates';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class CitiesComponent implements OnInit {
+export class CitiesComponent implements OnInit, OnDestroy {
 
     cities: City[];
     centerCoord: CityCoordinates;
     firstLetter: string = '';
     timeRequest:Date;
     favoriteId: number = -1;
+    timerRefreshId:NodeJS.Timer;
+    isContinueRefresh:boolean = true;
 
     constructor (
         private weatherService: WeatherService,
@@ -36,17 +38,19 @@ export class CitiesComponent implements OnInit {
 
                 //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
                 let self = this;
-                let timerId = setTimeout(function tick() {
+                self.timerRefreshId = setTimeout(function tick() {
                     self.weatherService.getCitiesWeatherByIds(self.cities).subscribe(cities => {
-                        cities.forEach(city => {
-                            let index = self.cities.findIndex(c => c.id === city.id);
-                            if (index > -1) {
-                                self.cities[index] = Object.assign({}, city);
-                            }
-                        })
-                        self.timeRequest = self.weatherService.timeLastRequestIds;
-                        timerId = setTimeout(tick, 5000);  
-                        self.changeDetector.markForCheck();  
+                        if (self.isContinueRefresh) {
+                            cities.forEach(city => {
+                                let index = self.cities.findIndex(c => c.id === city.id);
+                                if (index > -1) {
+                                    self.cities[index] = Object.assign({}, city);
+                                }
+                            })
+                            self.timeRequest = self.weatherService.timeLastRequestIds;
+                            self.timerRefreshId = setTimeout(tick, 5000);
+                            self.changeDetector.markForCheck();
+                        }  
                     })
                 }, 5000);
             })
@@ -90,5 +94,10 @@ export class CitiesComponent implements OnInit {
                 }
             })            
         }
+    }
+
+    ngOnDestroy() {
+        clearTimeout(this.timerRefreshId);
+        this.isContinueRefresh = false;
     }
 }

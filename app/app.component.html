@@ -6,8 +6,8 @@
             <a class="header-menu-link" routerLink="/cities" routerLinkActive="active">Cities</a>
             <a class="header-menu-link" routerLink="/map" routerLinkActive="active">Map</a>
             <a class="header-menu-link" routerLink="/weather-in-city" routerLinkActive="active">Weather In City</a>
+            <span class="header-time" title = "Last change detection tree gets stable (ms)">{{ timeGetStable }}</span>
         </nav>
-      <!--  <span class="header-time">{{ timeRequest | date:'dd.MM.yyyy hh:mm' }}</span>-->
     </div>
     <div class="center">
         <router-outlet></router-outlet>

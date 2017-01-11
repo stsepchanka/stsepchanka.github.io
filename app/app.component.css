@@ -30,9 +30,11 @@ html {
 .header-menu-link:hover, .header-menu-link:active, .header-menu-link:focus {
     background-color: #1a9cb0;
 }
-/*.header-time {
+.header-time {
     float: right;
-}*/
+    padding: 18px;
+    color: #fff;
+}
 .center {
     padding: 70px 20px 62px;
 }

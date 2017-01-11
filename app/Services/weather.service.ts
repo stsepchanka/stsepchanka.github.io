@@ -14,6 +14,7 @@ export class WeatherService {
     private citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
     private countCities: number = 50;
     private appid: string = 'f3dbe2c418d2f197d570d0224966b043';
+    private refreshDataTime: number = 10*60*1000;
 
     private centerCoord: CityCoordinates;
     private cities: City[];
@@ -54,7 +55,7 @@ export class WeatherService {
 
     getCitiesWeather(centerCoord: CityCoordinates): Observable<City[]> {
         if (this.cities == null 
-            || (new Date()).getTime() - this.timeRequest.getTime() > 10*60*1000
+            || (new Date()).getTime() - this.timeRequest.getTime() > this.refreshDataTime
         ) {
             let params = new URLSearchParams();
             params.set('lat', centerCoord.lat.toString());
@@ -84,7 +85,7 @@ export class WeatherService {
     }
 
     getCitiesWeatherByIds(cities:City[]): Observable<City[]> {
-        if ((new Date()).getTime() - this.timeRequestIds.getTime() < 2*60*1000) {
+        if ((new Date()).getTime() - this.timeRequestIds.getTime() < this.refreshDataTime) {
             return new Observable<City[]>(
                 observer => {
                     observer.next(cities);

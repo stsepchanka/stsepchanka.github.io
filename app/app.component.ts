@@ -2,7 +2,7 @@
 /// <reference path="../node_modules/@types/node/index.d.ts"/>
 /// <reference path="../node_modules/rxjs/rx.d.ts"/>  
 
-import { Component } from '@angular/core';
+import { Component, NgZone, ChangeDetectorRef, OnInit } from '@angular/core';
 
 import { WeatherService } from './Services/weather.service';
 
@@ -13,4 +13,21 @@ import { WeatherService } from './Services/weather.service';
     styleUrls:  ['./app/app.component.css']
 })
 
-export class AppComponent {}
+export class AppComponent implements OnInit {
+
+    timeStartTask: Date;
+    timeGetStable: number = 0; 
+
+    constructor(private zone: NgZone, private changeDetectorRef: ChangeDetectorRef) {
+        this.timeStartTask = new Date();
+    }
+
+    ngOnInit () {
+        this.zone.onUnstable.subscribe(() => { 
+            this.timeStartTask = new Date()
+        });
+        this.zone.onStable.subscribe(() => {
+            this.timeGetStable = (new Date()).getTime() - this.timeStartTask.getTime()
+        });
+    }
+}
