@@ -52,7 +52,7 @@ webpackJsonp([0],{
 	    { path: 'cities-async', component: citiesAsync_component_1.CitiesAsyncComponent },
 	    { path: 'map', component: map_component_1.MapComponent },
 	    { path: 'weather-in-city', component: weatherInCity_component_1.WeatherInCityComponent },
-	    { path: '', component: weatherInCity_component_1.WeatherInCityComponent },
+	    { path: '', component: cities_component_1.CitiesComponent },
 	    { path: '**', component: pagenotfound_component_1.PageNotFoundComponent }
 	];
 	var AppModule = (function () {

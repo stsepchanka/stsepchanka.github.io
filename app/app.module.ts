@@ -33,7 +33,7 @@ const appRoutes: Routes = [
   { path: 'cities-async', component: CitiesAsyncComponent },
   { path: 'map', component: MapComponent },
   { path: 'weather-in-city', component: WeatherInCityComponent },
-  { path: '', component: WeatherInCityComponent },
+  { path: '', component: CitiesComponent },
   { path: '**', component: PageNotFoundComponent }
 ];
 
