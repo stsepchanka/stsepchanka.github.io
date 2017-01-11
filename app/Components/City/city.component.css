@@ -1,8 +1,8 @@
 .cities-city {
-    width: 300px;
+    width: 350px;
     display: inline-table;
     font-size: 18px;
-    margin-bottom: 5px;
+    margin: -30px 0 5px;
 }
 .cities-city-temp {
     display: inline-block;
@@ -10,11 +10,9 @@
     text-align: right;
     margin-right: 5px;
 }
-.blue {
-    color: blue;
-}
-.red {
-    color: red;
+.cities-city-weather_icon {
+    position: relative;
+    bottom: -17px;
 }
 .city-letter {
     width: 20px;
@@ -24,4 +22,21 @@
     margin-top: 20px;
     margin-bottom: 7px;
     font-size: 18px;
+}
+.fa.fa-star, .fa.fa-star-o, .fa.fa-trash-o {
+    z-index: 1;
+    position: relative;
+    margin-left: 10px;
+}
+.fa.fa-star-o, .fa.fa-trash-o {
+    color: gray;
+}
+.fa.fa-star-o:hover {
+    color: gold;
+}
+.fa.fa-star {
+    color: gold;
+}
+.fa.fa-trash-o:hover {
+    color: red;
 }

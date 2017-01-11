@@ -1,5 +1,10 @@
 <div *ngIf="isDisplayLetter" class="city-letter">{{ city.name[0] }}</div>
 <div class='cities-city'>
-    <span class="cities-city-temp" [ngClass]="getClassColor(city.main.temp)">{{ city.main.temp | kelvin2celsius | temperature }}</span>
+    <span class="cities-city-temp" [tempColor] = "city.main.temp | kelvin2celsius">{{ city.main.temp | kelvin2celsius | temperature }}</span>
     <span class="cities-city-name">{{ city.name }}</span>
+    <wind [wind] = "city.wind"></wind>
+    <weather-icon class="cities-city-weather_icon" [icon] = "city.weather[0].icon" [title]="city.weather[0].description"></weather-icon>
+    <i *ngIf="isWithActions" class="fa" [ngClass]="{'fa-star':isFavorite, 'fa-star-o':!isFavorite }" 
+        (click)="onStarClick()" title="Make favorite"></i>
+    <i *ngIf="isWithActions" class="fa fa-trash-o" (click)="onRemove()" title="Remove city"></i>
 </div>

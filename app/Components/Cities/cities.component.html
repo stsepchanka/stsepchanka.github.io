@@ -1,4 +1,11 @@
+<div class="cities-new">
+    <label>City: </label>
+    <input class="cities-cityname" #name placeholder="City name"/>
+    <button (click)="addCity(name.value)">Add city</button>
+</div>
 <div *ngIf="timeRequest" class="time_request">Last refreshed {{ timeRequest | date:'dd.MM.yyyy hh:mm' }} </div>
 <div class="cities">
-    <city *ngFor="let city of (cities | async);" [city]="city" [isDisplayLetter]="isNewLetter(city?.name[0])"></city>
+    <city *ngFor="let city of cities; let i = index;" 
+            [city]="city" [isDisplayLetter]="isNewLetter(city?.name[0])" [actions]="true"
+            [isFavorite]="city.id === favoriteId" (favorite)="onFavorite($event, i)" (remove)="onRemove($event, i)"></city>
 </div>

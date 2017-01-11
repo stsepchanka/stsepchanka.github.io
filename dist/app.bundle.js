@@ -35,15 +35,21 @@ webpackJsonp([0],{
 	var core_2 = __webpack_require__(354);
 	var app_component_1 = __webpack_require__(375);
 	var cities_component_1 = __webpack_require__(378);
-	var city_component_1 = __webpack_require__(379);
+	var citiesAsync_component_1 = __webpack_require__(379);
+	var city_component_1 = __webpack_require__(380);
 	var map_component_1 = __webpack_require__(382);
 	var weatherInCity_component_1 = __webpack_require__(383);
-	var pagenotfound_component_1 = __webpack_require__(384);
-	var kelvin2celsius_pipe_1 = __webpack_require__(381);
-	var temperature_pipe_1 = __webpack_require__(385);
-	var weather_pipe_1 = __webpack_require__(386);
+	var wind_component_1 = __webpack_require__(384);
+	var weatherIcon_component_1 = __webpack_require__(386);
+	var pagenotfound_component_1 = __webpack_require__(387);
+	var kelvin2celsius_pipe_1 = __webpack_require__(388);
+	var temperature_pipe_1 = __webpack_require__(389);
+	var weather_pipe_1 = __webpack_require__(390);
+	var tempcolor_directive_1 = __webpack_require__(391);
+	var rotate_directive_1 = __webpack_require__(392);
 	var appRoutes = [
 	    { path: 'cities', component: cities_component_1.CitiesComponent },
+	    { path: 'cities-async', component: citiesAsync_component_1.CitiesAsyncComponent },
 	    { path: 'map', component: map_component_1.MapComponent },
 	    { path: 'weather-in-city', component: weatherInCity_component_1.WeatherInCityComponent },
 	    { path: '', component: weatherInCity_component_1.WeatherInCityComponent },
@@ -65,13 +71,18 @@ webpackJsonp([0],{
 	            declarations: [
 	                app_component_1.AppComponent,
 	                cities_component_1.CitiesComponent,
+	                citiesAsync_component_1.CitiesAsyncComponent,
 	                city_component_1.CityComponent,
 	                map_component_1.MapComponent,
 	                weatherInCity_component_1.WeatherInCityComponent,
+	                wind_component_1.WindComponent,
+	                weatherIcon_component_1.WeatherIconComponent,
 	                pagenotfound_component_1.PageNotFoundComponent,
 	                kelvin2celsius_pipe_1.Kelvin2celsiusPipe,
 	                temperature_pipe_1.TemperaturePipe,
-	                weather_pipe_1.WeatherPipe
+	                weather_pipe_1.WeatherPipe,
+	                tempcolor_directive_1.TempcolorDirective,
+	                rotate_directive_1.RotateDirective
 	            ],
 	            bootstrap: [app_component_1.AppComponent]
 	        }), 
@@ -2320,16 +2331,25 @@ webpackJsonp([0],{
 	    function WeatherService(http) {
 	        this.http = http;
 	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
+	        this.citiesByIdsUrl = 'http://api.openweathermap.org/data/2.5/group';
 	        this.citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
 	        this.countCities = 50;
 	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
 	        this.centerCoord = null;
 	        this.cities = null;
 	        this.timeRequest = null;
+	        this.timeRequestIds = null;
 	    }
 	    Object.defineProperty(WeatherService.prototype, "timeLastRequest", {
 	        get: function () {
 	            return this.timeRequest;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(WeatherService.prototype, "timeLastRequestIds", {
+	        get: function () {
+	            return this.timeRequestIds;
 	        },
 	        enumerable: true,
 	        configurable: true
@@ -2367,6 +2387,7 @@ webpackJsonp([0],{
 	                    return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
 	                });
 	                _this.timeRequest = new Date();
+	                _this.timeRequestIds = _this.timeRequest;
 	                return _this.cities;
 	            });
 	        }
@@ -2377,10 +2398,38 @@ webpackJsonp([0],{
 	            });
 	        }
 	    };
-	    WeatherService.prototype.getCityWeatherByName = function (cityName) {
+	    WeatherService.prototype.getCitiesWeatherByIds = function (cities) {
+	        var _this = this;
+	        if ((new Date()).getTime() - this.timeRequestIds.getTime() < 2 * 60 * 1000) {
+	            return new Observable_1.Observable(function (observer) {
+	                observer.next(cities);
+	                observer.complete();
+	            });
+	        }
+	        var ids = cities.map(function (city) { return city.id; });
+	        var idsMaxCnt = 20, index = 0, params = new http_1.URLSearchParams(), obsArr = [];
+	        params.set('appid', this.appid);
+	        while (ids.length > index * idsMaxCnt) {
+	            params.set('id', ids.slice(index * idsMaxCnt, (index + 1) * idsMaxCnt).join(','));
+	            obsArr.push(this.http.get(this.citiesByIdsUrl, { search: params })
+	                .map(function (result) {
+	                var citiesIds = result.json();
+	                return citiesIds.list || [];
+	            }));
+	            index++;
+	        }
+	        return Observable_1.Observable.onErrorResumeNext(obsArr)
+	            .reduce(function (citiesAll, citiesNew) {
+	            citiesAll = citiesAll.concat(citiesNew);
+	            _this.timeRequestIds = new Date();
+	            return citiesAll;
+	        }, []);
+	    };
+	    WeatherService.prototype.getCityWeatherByName = function (cityName, units) {
+	        if (units === void 0) { units = 'metric'; }
 	        var params = new http_1.URLSearchParams();
 	        params.set('q', cityName);
-	        params.set('units', 'metric');
+	        params.set('units', units);
 	        params.set('appid', this.appid);
 	        return this.http.get(this.citiyWeatherByNameUrl, { search: params })
 	            .map(function (result) {
@@ -2431,17 +2480,35 @@ webpackJsonp([0],{
 	var core_1 = __webpack_require__(3);
 	var weather_service_1 = __webpack_require__(376);
 	var CitiesComponent = (function () {
-	    function CitiesComponent(weatherService) {
+	    function CitiesComponent(weatherService, changeDetector) {
 	        this.weatherService = weatherService;
+	        this.changeDetector = changeDetector;
 	        this.firstLetter = '';
+	        this.favoriteId = -1;
 	    }
 	    CitiesComponent.prototype.ngOnInit = function () {
 	        var _this = this;
 	        this.weatherService.getCenterCoord().subscribe(function (coord) {
 	            _this.centerCoord = coord;
-	            _this.cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
-	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function () {
+	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function (cities) {
+	                _this.cities = cities;
 	                _this.timeRequest = _this.weatherService.timeLastRequest;
+	                _this.changeDetector.markForCheck();
+	                //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
+	                var self = _this;
+	                var timerId = setTimeout(function tick() {
+	                    self.weatherService.getCitiesWeatherByIds(self.cities).subscribe(function (cities) {
+	                        cities.forEach(function (city) {
+	                            var index = self.cities.findIndex(function (c) { return c.id === city.id; });
+	                            if (index > -1) {
+	                                self.cities[index] = Object.assign({}, city);
+	                            }
+	                        });
+	                        self.timeRequest = self.weatherService.timeLastRequestIds;
+	                        timerId = setTimeout(tick, 5000);
+	                        self.changeDetector.markForCheck();
+	                    });
+	                }, 5000);
 	            });
 	        });
 	    };
@@ -2450,13 +2517,47 @@ webpackJsonp([0],{
 	        this.firstLetter = letter;
 	        return isDifferent;
 	    };
+	    CitiesComponent.prototype.onFavorite = function (isFavorite, index) {
+	        if (isFavorite) {
+	            this.favoriteId = this.cities[index].id;
+	        }
+	        else {
+	            this.favoriteId = -1;
+	        }
+	    };
+	    CitiesComponent.prototype.onRemove = function (name, index) {
+	        if (this.cities[index].id === this.favoriteId) {
+	            this.favoriteId = -1;
+	        }
+	        this.cities.splice(index, 1);
+	    };
+	    CitiesComponent.prototype.addCity = function (name) {
+	        var _this = this;
+	        if (name) {
+	            name = name.trim().toUpperCase();
+	            this.weatherService.getCityWeatherByName(name, '').subscribe(function (city) {
+	                var currentIndex = _this.cities.findIndex(function (c) { return c.name === city.name; });
+	                if (currentIndex < 0) {
+	                    currentIndex = _this.cities.findIndex(function (c) { return c.name > city.name; });
+	                    if (currentIndex < 0) {
+	                        _this.cities.push(city);
+	                    }
+	                    else {
+	                        _this.cities.splice(currentIndex, 0, city);
+	                    }
+	                    _this.changeDetector.markForCheck();
+	                }
+	            });
+	        }
+	    };
 	    CitiesComponent = __decorate([
 	        core_1.Component({
 	            selector: 'cities',
 	            templateUrl: './app/Components/Cities/cities.component.html',
-	            styleUrls: ['./app/Components/Cities/cities.component.css']
+	            styleUrls: ['./app/Components/Cities/cities.component.css'],
+	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
 	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService, core_1.ChangeDetectorRef])
 	    ], CitiesComponent);
 	    return CitiesComponent;
 	}());
@@ -2479,55 +2580,43 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var city_1 = __webpack_require__(380);
-	var kelvin2celsius_pipe_1 = __webpack_require__(381);
-	var CityComponent = (function () {
-	    function CityComponent(kelvin2celsius) {
-	        this.kelvin2celsius = kelvin2celsius;
+	var weather_service_1 = __webpack_require__(376);
+	var CitiesAsyncComponent = (function () {
+	    function CitiesAsyncComponent(weatherService) {
+	        this.weatherService = weatherService;
+	        this.firstLetter = '';
 	    }
-	    CityComponent.prototype.getClassColor = function (tempKelvin) {
-	        var tempCelsius = this.kelvin2celsius.transform(tempKelvin);
-	        return tempCelsius > 0 ? 'red' : 'blue';
+	    CitiesAsyncComponent.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.weatherService.getCenterCoord().subscribe(function (coord) {
+	            _this.centerCoord = coord;
+	            _this.$cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
+	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function () {
+	                _this.timeRequest = _this.weatherService.timeLastRequest;
+	            });
+	        });
 	    };
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', city_1.City)
-	    ], CityComponent.prototype, "city", void 0);
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', Boolean)
-	    ], CityComponent.prototype, "isDisplayLetter", void 0);
-	    CityComponent = __decorate([
+	    CitiesAsyncComponent.prototype.isNewLetter = function (letter) {
+	        var isDifferent = this.firstLetter !== letter;
+	        this.firstLetter = letter;
+	        return isDifferent;
+	    };
+	    CitiesAsyncComponent = __decorate([
 	        core_1.Component({
-	            selector: 'city',
-	            providers: [kelvin2celsius_pipe_1.Kelvin2celsiusPipe],
-	            templateUrl: './app/Components/City/city.component.html',
-	            styleUrls: ['./app/Components/City/city.component.css']
+	            selector: 'cities-async',
+	            templateUrl: './app/Components/CitiesAsync/citiesAsync.component.html',
+	            styleUrls: ['./app/Components/CitiesAsync/citiesAsync.component.css']
 	        }), 
-	        __metadata('design:paramtypes', [kelvin2celsius_pipe_1.Kelvin2celsiusPipe])
-	    ], CityComponent);
-	    return CityComponent;
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
+	    ], CitiesAsyncComponent);
+	    return CitiesAsyncComponent;
 	}());
-	exports.CityComponent = CityComponent;
+	exports.CitiesAsyncComponent = CitiesAsyncComponent;
 
 
 /***/ },
 
 /***/ 380:
-/***/ function(module, exports) {
-
-	"use strict";
-	var City = (function () {
-	    function City() {
-	    }
-	    return City;
-	}());
-	exports.City = City;
-
-
-/***/ },
-
-/***/ 381:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2541,20 +2630,68 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var Kelvin2celsiusPipe = (function () {
-	    function Kelvin2celsiusPipe() {
-	        this.kelvin2celsius = 273.15;
+	var city_1 = __webpack_require__(381);
+	var CityComponent = (function () {
+	    function CityComponent() {
+	        this.favorite = new core_1.EventEmitter();
+	        this.remove = new core_1.EventEmitter();
 	    }
-	    Kelvin2celsiusPipe.prototype.transform = function (value) {
-	        return value - this.kelvin2celsius;
+	    CityComponent.prototype.onStarClick = function () {
+	        this.favorite.emit(!this.isFavorite);
 	    };
-	    Kelvin2celsiusPipe = __decorate([
-	        core_1.Pipe({ name: 'kelvin2celsius' }), 
+	    CityComponent.prototype.onRemove = function () {
+	        this.remove.emit(this.city.name);
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', city_1.City)
+	    ], CityComponent.prototype, "city", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isDisplayLetter", void 0);
+	    __decorate([
+	        core_1.Input('actions'), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isWithActions", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isFavorite", void 0);
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], CityComponent.prototype, "favorite", void 0);
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], CityComponent.prototype, "remove", void 0);
+	    CityComponent = __decorate([
+	        core_1.Component({
+	            selector: 'city',
+	            templateUrl: './app/Components/City/city.component.html',
+	            styleUrls: ['./app/Components/City/city.component.css'],
+	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
+	        }), 
 	        __metadata('design:paramtypes', [])
-	    ], Kelvin2celsiusPipe);
-	    return Kelvin2celsiusPipe;
+	    ], CityComponent);
+	    return CityComponent;
 	}());
-	exports.Kelvin2celsiusPipe = Kelvin2celsiusPipe;
+	exports.CityComponent = CityComponent;
+
+
+/***/ },
+
+/***/ 381:
+/***/ function(module, exports) {
+
+	"use strict";
+	var City = (function () {
+	    function City() {
+	    }
+	    return City;
+	}());
+	exports.City = City;
 
 
 /***/ },
@@ -2650,6 +2787,94 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
+	var wind_1 = __webpack_require__(385);
+	var WindComponent = (function () {
+	    function WindComponent() {
+	    }
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', wind_1.Wind)
+	    ], WindComponent.prototype, "wind", void 0);
+	    WindComponent = __decorate([
+	        core_1.Component({
+	            selector: 'wind',
+	            templateUrl: './app/Components/Wind/wind.component.html',
+	            styleUrls: ['./app/Components/Wind/wind.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], WindComponent);
+	    return WindComponent;
+	}());
+	exports.WindComponent = WindComponent;
+
+
+/***/ },
+
+/***/ 385:
+/***/ function(module, exports) {
+
+	"use strict";
+	var Wind = (function () {
+	    function Wind() {
+	    }
+	    return Wind;
+	}());
+	exports.Wind = Wind;
+
+
+/***/ },
+
+/***/ 386:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var WeatherIconComponent = (function () {
+	    function WeatherIconComponent() {
+	        this.iconUrl = 'http://openweathermap.org/img/w/';
+	    }
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', String)
+	    ], WeatherIconComponent.prototype, "icon", void 0);
+	    WeatherIconComponent = __decorate([
+	        core_1.Component({
+	            selector: 'weather-icon',
+	            templateUrl: './app/Components/WeatherIcon/weatherIcon.component.html',
+	            styleUrls: ['./app/Components/WeatherIcon/weatherIcon.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], WeatherIconComponent);
+	    return WeatherIconComponent;
+	}());
+	exports.WeatherIconComponent = WeatherIconComponent;
+
+
+/***/ },
+
+/***/ 387:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
 	var PageNotFoundComponent = (function () {
 	    function PageNotFoundComponent() {
 	    }
@@ -2667,7 +2892,39 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 385:
+/***/ 388:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var Kelvin2celsiusPipe = (function () {
+	    function Kelvin2celsiusPipe() {
+	        this.kelvin2celsius = 273.15;
+	    }
+	    Kelvin2celsiusPipe.prototype.transform = function (value) {
+	        return Math.round(value - this.kelvin2celsius);
+	    };
+	    Kelvin2celsiusPipe = __decorate([
+	        core_1.Pipe({ name: 'kelvin2celsius' }), 
+	        __metadata('design:paramtypes', [])
+	    ], Kelvin2celsiusPipe);
+	    return Kelvin2celsiusPipe;
+	}());
+	exports.Kelvin2celsiusPipe = Kelvin2celsiusPipe;
+
+
+/***/ },
+
+/***/ 389:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2685,7 +2942,7 @@ webpackJsonp([0],{
 	    function TemperaturePipe() {
 	    }
 	    TemperaturePipe.prototype.transform = function (value) {
-	        return (value > 0 ? '+' : '') + value.toFixed(0).toString();
+	        return (value > 0 ? '+' : '') + value.toString();
 	    };
 	    TemperaturePipe = __decorate([
 	        core_1.Pipe({ name: 'temperature' }), 
@@ -2698,7 +2955,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 386:
+/***/ 390:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2766,6 +3023,97 @@ webpackJsonp([0],{
 	    return WeatherPipe;
 	}());
 	exports.WeatherPipe = WeatherPipe;
+
+
+/***/ },
+
+/***/ 391:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var TempColor = (function () {
+	    function TempColor(temp, color) {
+	        this.temp = temp;
+	        this.color = color;
+	    }
+	    return TempColor;
+	}());
+	var TempcolorDirective = (function () {
+	    function TempcolorDirective(el) {
+	        this.el = el;
+	    }
+	    TempcolorDirective.prototype.ngOnInit = function () {
+	        var color;
+	        if (this.tempColor < 0) {
+	            color = Math.max(0xFF + this.tempColor * 0x5, 0x30);
+	        }
+	        else {
+	            color = 0xFF0000 + Math.max(0x0, 0x60 - this.tempColor * 0x3) * 0x100 - Math.min(0, 0x60 - this.tempColor * 0x3);
+	        }
+	        this.el.nativeElement.style.color = ('0000' + color.toString(16)).slice(-6);
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Number)
+	    ], TempcolorDirective.prototype, "tempColor", void 0);
+	    TempcolorDirective = __decorate([
+	        core_1.Directive({
+	            selector: '[tempColor]'
+	        }), 
+	        __metadata('design:paramtypes', [core_1.ElementRef])
+	    ], TempcolorDirective);
+	    return TempcolorDirective;
+	}());
+	exports.TempcolorDirective = TempcolorDirective;
+
+
+/***/ },
+
+/***/ 392:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var RotateDirective = (function () {
+	    function RotateDirective(el) {
+	        this.el = el;
+	        this.rotate = 0;
+	    }
+	    RotateDirective.prototype.ngOnInit = function () {
+	        this.el.nativeElement.style.transform = "rotate(" + this.rotate + "deg)";
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Number)
+	    ], RotateDirective.prototype, "rotate", void 0);
+	    RotateDirective = __decorate([
+	        core_1.Directive({
+	            selector: '[rotate]'
+	        }), 
+	        __metadata('design:paramtypes', [core_1.ElementRef])
+	    ], RotateDirective);
+	    return RotateDirective;
+	}());
+	exports.RotateDirective = RotateDirective;
 
 
 /***/ }

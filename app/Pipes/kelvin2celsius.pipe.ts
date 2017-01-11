@@ -7,6 +7,6 @@ export class Kelvin2celsiusPipe implements PipeTransform {
     kelvin2celsius:number = 273.15;
 
     transform(value: number):number {
-        return value - this.kelvin2celsius;
+        return Math.round(value - this.kelvin2celsius);
     }
 }

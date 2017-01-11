@@ -1,23 +1,28 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, ChangeDetectionStrategy, EventEmitter } from '@angular/core';
 
 import { City } from './../../Entities/city';
-import { Kelvin2celsiusPipe } from './../../Pipes/kelvin2celsius.pipe';
 
 @Component({
     selector: 'city',
-    providers: [Kelvin2celsiusPipe],
     templateUrl: './app/Components/City/city.component.html',
-    styleUrls: ['./app/Components/City/city.component.css']
+    styleUrls: ['./app/Components/City/city.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class CityComponent {
     @Input() city: City;
     @Input() isDisplayLetter: Boolean;
+    @Input('actions') isWithActions: Boolean;
+    @Input() isFavorite: Boolean;
+    @Output() favorite = new EventEmitter();
+    @Output() remove = new EventEmitter();
 
-    constructor(private kelvin2celsius: Kelvin2celsiusPipe) {}
+    constructor() {}
 
-    getClassColor(tempKelvin: number):string {
-        let tempCelsius: number = this.kelvin2celsius.transform(tempKelvin);
-        return tempCelsius > 0 ? 'red' : 'blue';
+    onStarClick() {
+        this.favorite.emit(!this.isFavorite);
+    }
+    onRemove() {
+        this.remove.emit(this.city.name);
     }
 }
