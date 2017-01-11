@@ -1,7 +1,2 @@
 node_modules
 dist/vendor.bundle.js.map
-*.eot
-*.svg
-*.woff
-*.woff2
-*.ttf
