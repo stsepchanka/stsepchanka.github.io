@@ -1,8 +1,11 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DatePipe } from '@angular/common';
 
-import { City } from './../Entities/city';
 import { WeatherService } from './../Services/weather.service';
+import { LoggerService } from './../Services/logger.service';
+
+import { City } from './../Entities/city';
+import { StatusMessage } from './../Enum/statusMessage';
 
 class CityWeather {
     name: string;
@@ -24,11 +27,12 @@ class CityWeather {
 })
 
 export class WeatherPipe implements PipeTransform {
-
+    private pipeName: string = 'Weather pipe';
     private cities: CityWeather[];
 
     constructor (
-        private weatherService: WeatherService
+        private weatherService: WeatherService,
+        private loggerService: LoggerService
     ) {
         this.cities = [];
     }
@@ -42,7 +46,9 @@ export class WeatherPipe implements PipeTransform {
 
             let cityWeather:CityWeather = this.cities.find(cw => cw.name === value);
 
-            if (!cityWeather) {
+            if (cityWeather) {
+                this.loggerService.log(this.pipeName, `Get ${ cityWeather.name } city weather from array`, StatusMessage.Info);
+            } else {
                 cityWeather = new CityWeather(value);
                 this.cities.push(cityWeather);
             }
@@ -53,6 +59,7 @@ export class WeatherPipe implements PipeTransform {
                    cityWeather.timeRequest = new Date();
                    cityWeather.city = city;
                    cityWeather.isRequestGoes = false;
+                   this.loggerService.log(this.pipeName, `Get ${ city.name } city weather from API`, StatusMessage.Info);
                 })
             }
 

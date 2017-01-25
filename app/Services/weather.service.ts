@@ -1,14 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Http, Response, URLSearchParams } from '@angular/http';
-import { Observable }     from 'rxjs/Observable';
+import { Observable } from 'rxjs/Observable';
+
+import { LoggerService } from './logger.service';
 
 import { CityCoordinates } from './../Entities/cityCoordinates';
 import { CitiesInCycle } from './../Entities/citiesInCycle';
 import { CitiesIds } from './../Entities/citiesIds';
 import { City } from './../Entities/city';
+import { StatusMessage } from './../Enum/statusMessage';
 
 @Injectable()
 export class WeatherService {
+    private serviceName:string = 'Weather service';
     private citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
     private citiesByIdsUrl = 'http://api.openweathermap.org/data/2.5/group';
     private citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
@@ -16,13 +20,14 @@ export class WeatherService {
     private appid: string = 'f3dbe2c418d2f197d570d0224966b043';
     private refreshDataTime: number = 10*60*1000;
 
-    private centerCoord: CityCoordinates;
     private cities: City[];
     private timeRequest: Date;
     private timeRequestIds: Date;
 
-    constructor (private http: Http) {
-        this.centerCoord = null;
+    constructor (
+        private http: Http,
+        private loggerService: LoggerService
+    ) {
         this.cities = null;
         this.timeRequest = null;
         this.timeRequestIds = null;
@@ -34,23 +39,6 @@ export class WeatherService {
 
     get timeLastRequestIds(): Date {
         return this.timeRequestIds;
-    }
-
-    getCenterCoord(): Observable<CityCoordinates> {
-        return new Observable<CityCoordinates>(
-            observer => {
-                if (this.centerCoord == null) {
-                    navigator.geolocation.getCurrentPosition(position => {
-                        this.centerCoord = new CityCoordinates(position.coords.latitude, position.coords.longitude); 
-                        observer.next(this.centerCoord);
-                        observer.complete();
-                    })
-                } else {
-                    observer.next(this.centerCoord);
-                    observer.complete();
-                }
-            }
-        );
     }
 
     getCitiesWeather(centerCoord: CityCoordinates): Observable<City[]> {
@@ -72,13 +60,16 @@ export class WeatherService {
                             });
                             this.timeRequest = new Date();
                             this.timeRequestIds = this.timeRequest;
+                            this.loggerService.log(this.serviceName, 'Get cities weather from API', StatusMessage.Success);
                             return this.cities;
-                        });
+                        })
+                        .catch((error) => { this.loggerService.log(this.serviceName, 'Error when getting cities weather from API', StatusMessage.Error);});
         } else {
             return new Observable<City[]>(
                 observer => {
                     observer.next(this.cities);
                     observer.complete();
+                    this.loggerService.log(this.serviceName, 'Get cities weather from array', StatusMessage.Info);
                 }
             )
         }
@@ -90,6 +81,7 @@ export class WeatherService {
                 observer => {
                     observer.next(cities);
                     observer.complete();
+                    this.loggerService.log(this.serviceName, `Get cities weather by ids from array`, StatusMessage.Info);
                 }
             )
         } 
@@ -108,8 +100,10 @@ export class WeatherService {
             obsArr.push(this.http.get(this.citiesByIdsUrl, { search: params })
                         .map((result) => {
                             let citiesIds: CitiesIds = result.json();
+                            this.loggerService.log(this.serviceName, `Get cities weather by ids from ${citiesIds.list[0].name} to ${citiesIds.list[citiesIds.cnt - 1].name} from API (inside map)`, StatusMessage.Success);
                             return citiesIds.list || [];
                         })
+                        .catch((error) => { this.loggerService.log(this.serviceName, 'Error when getting cities weather by ids from API (inside map)', StatusMessage.Error);})
             );
             index++;
         }
@@ -118,6 +112,7 @@ export class WeatherService {
             .reduce((citiesAll, citiesNew) => {
                 citiesAll = citiesAll.concat(citiesNew);
                 this.timeRequestIds = new Date();
+                this.loggerService.log(this.serviceName, `Get cities weather by ids from ${citiesNew[0].name} to ${citiesNew[citiesNew.length - 1].name} from API (inside reduce)`, StatusMessage.Info);
                 return citiesAll;
             }, [])
     }
@@ -131,6 +126,7 @@ export class WeatherService {
         return this.http.get(this.citiyWeatherByNameUrl, { search: params })
                         .map((result) => {
                             let city: City = result.json();
+                            this.loggerService.log(this.serviceName, `Get ${ city.name } city weather from API`, StatusMessage.Success);
                             return city;
                         });
     }

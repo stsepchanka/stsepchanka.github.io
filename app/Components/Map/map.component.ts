@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 
+import { LocationService } from './../../Services/location.service';
 import { WeatherService } from './../../Services/weather.service';
+import { LoggerService } from './../../Services/logger.service';
+
 import { CityCoordinates } from './../../Entities/cityCoordinates';
+import { StatusMessage } from './../../Enum/statusMessage';
 
 @Component({
     selector: 'map',
@@ -10,11 +14,17 @@ import { CityCoordinates } from './../../Entities/cityCoordinates';
 })
 
 export class MapComponent {
-     centerCoord: CityCoordinates = new CityCoordinates(0, 0);
+    private componentName: string = 'Map component';
+    private centerCoord: CityCoordinates = new CityCoordinates(0, 0);
 
-     constructor(private weatherService: WeatherService) {
-         weatherService.getCenterCoord().subscribe(coord => {
-             this.centerCoord = coord;
-         })
-     }
+    constructor(
+        private locationService: LocationService,
+        private weatherService: WeatherService,
+        private loggerService: LoggerService
+    ) {
+        locationService.getCenterCoord().subscribe(coord => {
+            this.centerCoord = coord;
+            this.loggerService.log(this.componentName, 'Get geo coordinates', StatusMessage.Info);
+        })
+    }
 }

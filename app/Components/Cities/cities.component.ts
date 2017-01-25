@@ -1,10 +1,13 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 
+import { LocationService } from './../../Services/location.service';
 import { WeatherService } from './../../Services/weather.service';
+import { LoggerService } from './../../Services/logger.service';
 
 import { City } from './../../Entities/city';
 import { CityCoordinates } from './../../Entities/cityCoordinates';
+import { StatusMessage } from './../../Enum/statusMessage';
 
 @Component({
     selector: 'cities',
@@ -14,27 +17,31 @@ import { CityCoordinates } from './../../Entities/cityCoordinates';
 })
 
 export class CitiesComponent implements OnInit, OnDestroy {
-
-    cities: City[];
-    centerCoord: CityCoordinates;
-    firstLetter: string = '';
-    timeRequest:Date;
-    favoriteId: number = -1;
-    timerRefreshId:NodeJS.Timer;
-    isContinueRefresh:boolean = true;
+    private componentName: string = 'Cities component';
+    private cities: City[];
+    private centerCoord: CityCoordinates;
+    private firstLetter: string = '';
+    private timeRequest:Date;
+    private favoriteId: number = -1;
+    private timerRefreshId:NodeJS.Timer;
+    private isContinueRefresh:boolean = true;
 
     constructor (
+        private locationService: LocationService,
         private weatherService: WeatherService,
+        private loggerService: LoggerService,
         private changeDetector: ChangeDetectorRef
     ) {}
 
     ngOnInit() { 
-        this.weatherService.getCenterCoord().subscribe(coord => {
+        this.locationService.getCenterCoord().subscribe(coord => {
             this.centerCoord = coord;
+            this.loggerService.log(this.componentName, 'Get geo coordinates', StatusMessage.Info);
             this.weatherService.getCitiesWeather(this.centerCoord).subscribe((cities) => {
                 this.cities = cities;
                 this.timeRequest = this.weatherService.timeLastRequest;
                 this.changeDetector.markForCheck();
+                this.loggerService.log(this.componentName, 'Get cities weather', StatusMessage.Info);
 
                 //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
                 let self = this;
@@ -50,6 +57,7 @@ export class CitiesComponent implements OnInit, OnDestroy {
                             self.timeRequest = self.weatherService.timeLastRequestIds;
                             self.timerRefreshId = setTimeout(tick, 5000);
                             self.changeDetector.markForCheck();
+                            self.loggerService.log(self.componentName, 'Refresh cities weather', StatusMessage.Info);
                         }  
                     })
                 }, 5000);
@@ -66,8 +74,10 @@ export class CitiesComponent implements OnInit, OnDestroy {
     onFavorite(isFavorite:boolean, index:number): void {
         if (isFavorite) {
             this.favoriteId = this.cities[index].id;
+            this.loggerService.log(this.componentName, `Set city ${ this.cities[index].name } as favorite`, StatusMessage.Info);
         } else {
             this.favoriteId = -1;
+            this.loggerService.log(this.componentName, `There is not favorite city`, StatusMessage.Info);
         }
     }
 
@@ -76,6 +86,7 @@ export class CitiesComponent implements OnInit, OnDestroy {
             this.favoriteId = -1;
         }
         this.cities.splice(index, 1);
+        this.loggerService.log(this.componentName, `Delete city ${ name }`, StatusMessage.Info);
     }
 
     addCity(name:string):void {
@@ -91,6 +102,7 @@ export class CitiesComponent implements OnInit, OnDestroy {
                         this.cities.splice(currentIndex, 0, city);
                     }
                     this.changeDetector.markForCheck();
+                    this.loggerService.log(this.componentName, `Add city ${ city.name }`, StatusMessage.Info);
                 }
             })            
         }
@@ -99,5 +111,6 @@ export class CitiesComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         clearTimeout(this.timerRefreshId);
         this.isContinueRefresh = false;
+        this.loggerService.log(this.componentName, `Destroy component`, StatusMessage.Info);
     }
 }

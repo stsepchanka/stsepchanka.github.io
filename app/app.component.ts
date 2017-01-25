@@ -4,11 +4,8 @@
 
 import { Component, NgZone, ChangeDetectorRef, OnInit } from '@angular/core';
 
-import { WeatherService } from './Services/weather.service';
-
 @Component({
     selector: 'my-app',
-    providers: [WeatherService],
     templateUrl: './app/app.component.html',
     styleUrls:  ['./app/app.component.css']
 })

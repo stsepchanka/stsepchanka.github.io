@@ -9,24 +9,21 @@ import 'rxjs/Rx';
 //import 'rxjs/add/operator/catch';
 //import 'rxjs/add/operator/map';
 
-import { AgmCoreModule } from 'angular2-google-maps/core';
+import { CitiesModule } from './Components/Cities/cities.module';
+import { CitiesAsyncModule } from './Components/CitiesAsync/citiesAsync.module';
+import { MapModule } from './Components/Map/map.module';
+import { WeatherInCityModule } from './Components/WeatherInCity/weatherInCity.module';
 
 import { AppComponent } from './app.component';
+import { PageNotFoundComponent } from './Components/PageNotFound/pagenotfound.component';
 import { CitiesComponent } from './Components/Cities/cities.component';
 import { CitiesAsyncComponent } from './Components/CitiesAsync/citiesAsync.component';
-import { CityComponent } from './Components/City/city.component';
 import { MapComponent } from './Components/Map/map.component';
 import { WeatherInCityComponent } from './Components/WeatherInCity/weatherInCity.component';
-import { WindComponent } from './Components/Wind/wind.component';
-import { WeatherIconComponent } from './Components/WeatherIcon/weatherIcon.component';
-import { PageNotFoundComponent } from './Components/PageNotFound/pagenotfound.component';
 
-import {Kelvin2celsiusPipe } from './Pipes/kelvin2celsius.pipe';
-import {TemperaturePipe } from './Pipes/temperature.pipe';
-import {WeatherPipe } from './Pipes/weather.pipe';
-
-import { TempcolorDirective } from './Directives/tempcolor.directive';
-import { RotateDirective } from './Directives/rotate.directive';
+import { LocationService } from './Services/location.service';
+import { WeatherService } from './Services/weather.service';
+import { LoggerService } from './Services/logger.service';
 
 const appRoutes: Routes = [
   { path: 'cities', component: CitiesComponent },
@@ -42,25 +39,19 @@ const appRoutes: Routes = [
     BrowserModule,
     HttpModule,
     RouterModule.forRoot(appRoutes),
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyDatH1l956GXlJ4vu1EfVfJSGoKni2-Lxk'
-    })
+    CitiesModule,
+    CitiesAsyncModule,
+    MapModule,
+    WeatherInCityModule
   ],
   declarations: [
     AppComponent,
-    CitiesComponent,
-    CitiesAsyncComponent,
-    CityComponent,
-    MapComponent,
-    WeatherInCityComponent,
-    WindComponent,
-    WeatherIconComponent,
-    PageNotFoundComponent,
-    Kelvin2celsiusPipe,
-    TemperaturePipe,
-    WeatherPipe,
-    TempcolorDirective,
-    RotateDirective
+    PageNotFoundComponent
+  ],
+  providers: [
+    LocationService,
+    WeatherService,
+    LoggerService
   ],
   bootstrap: [ AppComponent ]
 })

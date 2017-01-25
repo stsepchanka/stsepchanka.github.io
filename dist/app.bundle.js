@@ -32,21 +32,19 @@ webpackJsonp([0],{
 	//import 'rxjs/add/observable/throw';
 	//import 'rxjs/add/operator/catch';
 	//import 'rxjs/add/operator/map';
-	var core_2 = __webpack_require__(354);
-	var app_component_1 = __webpack_require__(375);
-	var cities_component_1 = __webpack_require__(378);
-	var citiesAsync_component_1 = __webpack_require__(379);
-	var city_component_1 = __webpack_require__(380);
-	var map_component_1 = __webpack_require__(382);
-	var weatherInCity_component_1 = __webpack_require__(383);
-	var wind_component_1 = __webpack_require__(384);
-	var weatherIcon_component_1 = __webpack_require__(386);
-	var pagenotfound_component_1 = __webpack_require__(387);
-	var kelvin2celsius_pipe_1 = __webpack_require__(388);
-	var temperature_pipe_1 = __webpack_require__(389);
-	var weather_pipe_1 = __webpack_require__(390);
-	var tempcolor_directive_1 = __webpack_require__(391);
-	var rotate_directive_1 = __webpack_require__(392);
+	var cities_module_1 = __webpack_require__(354);
+	var citiesAsync_module_1 = __webpack_require__(371);
+	var map_module_1 = __webpack_require__(373);
+	var weatherInCity_module_1 = __webpack_require__(396);
+	var app_component_1 = __webpack_require__(399);
+	var pagenotfound_component_1 = __webpack_require__(400);
+	var cities_component_1 = __webpack_require__(365);
+	var citiesAsync_component_1 = __webpack_require__(372);
+	var map_component_1 = __webpack_require__(395);
+	var weatherInCity_component_1 = __webpack_require__(397);
+	var location_service_1 = __webpack_require__(366);
+	var weather_service_1 = __webpack_require__(370);
+	var logger_service_1 = __webpack_require__(367);
 	var appRoutes = [
 	    { path: 'cities', component: cities_component_1.CitiesComponent },
 	    { path: 'cities-async', component: citiesAsync_component_1.CitiesAsyncComponent },
@@ -64,25 +62,19 @@ webpackJsonp([0],{
 	                platform_browser_1.BrowserModule,
 	                http_1.HttpModule,
 	                router_1.RouterModule.forRoot(appRoutes),
-	                core_2.AgmCoreModule.forRoot({
-	                    apiKey: 'AIzaSyDatH1l956GXlJ4vu1EfVfJSGoKni2-Lxk'
-	                })
+	                cities_module_1.CitiesModule,
+	                citiesAsync_module_1.CitiesAsyncModule,
+	                map_module_1.MapModule,
+	                weatherInCity_module_1.WeatherInCityModule
 	            ],
 	            declarations: [
 	                app_component_1.AppComponent,
-	                cities_component_1.CitiesComponent,
-	                citiesAsync_component_1.CitiesAsyncComponent,
-	                city_component_1.CityComponent,
-	                map_component_1.MapComponent,
-	                weatherInCity_component_1.WeatherInCityComponent,
-	                wind_component_1.WindComponent,
-	                weatherIcon_component_1.WeatherIconComponent,
-	                pagenotfound_component_1.PageNotFoundComponent,
-	                kelvin2celsius_pipe_1.Kelvin2celsiusPipe,
-	                temperature_pipe_1.TemperaturePipe,
-	                weather_pipe_1.WeatherPipe,
-	                tempcolor_directive_1.TempcolorDirective,
-	                rotate_directive_1.RotateDirective
+	                pagenotfound_component_1.PageNotFoundComponent
+	            ],
+	            providers: [
+	                location_service_1.LocationService,
+	                weather_service_1.WeatherService,
+	                logger_service_1.LoggerService
 	            ],
 	            bootstrap: [app_component_1.AppComponent]
 	        }), 
@@ -99,19 +91,41 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	function __export(m) {
-	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-	}
-	// main modules
-	__export(__webpack_require__(355));
-	__export(__webpack_require__(370));
-	// Google Maps types
-	// core module
-	// we explicitly export the module here to prevent this Ionic 2 bug:
-	// http://stevemichelotti.com/integrate-angular-2-google-maps-into-ionic-2/
-	var core_module_1 = __webpack_require__(374);
-	exports.AgmCoreModule = core_module_1.AgmCoreModule;
-	//# sourceMappingURL=index.js.map
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var common_1 = __webpack_require__(22);
+	var city_module_1 = __webpack_require__(355);
+	var cities_component_1 = __webpack_require__(365);
+	var CitiesModule = (function () {
+	    function CitiesModule() {
+	    }
+	    CitiesModule = __decorate([
+	        core_1.NgModule({
+	            imports: [
+	                common_1.CommonModule,
+	                city_module_1.CityModule
+	            ],
+	            declarations: [
+	                cities_component_1.CitiesComponent,
+	            ],
+	            exports: [
+	                cities_component_1.CitiesComponent
+	            ]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], CitiesModule);
+	    return CitiesModule;
+	}());
+	exports.CitiesModule = CitiesModule;
+
 
 /***/ },
 
@@ -119,21 +133,51 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var google_map_1 = __webpack_require__(356);
-	exports.SebmGoogleMap = google_map_1.SebmGoogleMap;
-	var google_map_circle_1 = __webpack_require__(364);
-	exports.SebmGoogleMapCircle = google_map_circle_1.SebmGoogleMapCircle;
-	var google_map_info_window_1 = __webpack_require__(365);
-	exports.SebmGoogleMapInfoWindow = google_map_info_window_1.SebmGoogleMapInfoWindow;
-	var google_map_marker_1 = __webpack_require__(366);
-	exports.SebmGoogleMapMarker = google_map_marker_1.SebmGoogleMapMarker;
-	var google_map_polygon_1 = __webpack_require__(367);
-	exports.SebmGoogleMapPolygon = google_map_polygon_1.SebmGoogleMapPolygon;
-	var google_map_polyline_1 = __webpack_require__(368);
-	exports.SebmGoogleMapPolyline = google_map_polyline_1.SebmGoogleMapPolyline;
-	var google_map_polyline_point_1 = __webpack_require__(369);
-	exports.SebmGoogleMapPolylinePoint = google_map_polyline_point_1.SebmGoogleMapPolylinePoint;
-	//# sourceMappingURL=directives.js.map
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var common_1 = __webpack_require__(22);
+	var city_component_1 = __webpack_require__(356);
+	var wind_component_1 = __webpack_require__(358);
+	var weatherIcon_component_1 = __webpack_require__(360);
+	var kelvin2celsius_pipe_1 = __webpack_require__(361);
+	var temperature_pipe_1 = __webpack_require__(362);
+	var tempcolor_directive_1 = __webpack_require__(363);
+	var rotate_directive_1 = __webpack_require__(364);
+	var CityModule = (function () {
+	    function CityModule() {
+	    }
+	    CityModule = __decorate([
+	        core_1.NgModule({
+	            imports: [
+	                common_1.CommonModule
+	            ],
+	            declarations: [
+	                city_component_1.CityComponent,
+	                wind_component_1.WindComponent,
+	                weatherIcon_component_1.WeatherIconComponent,
+	                kelvin2celsius_pipe_1.Kelvin2celsiusPipe,
+	                temperature_pipe_1.TemperaturePipe,
+	                tempcolor_directive_1.TempcolorDirective,
+	                rotate_directive_1.RotateDirective
+	            ],
+	            exports: [
+	                city_component_1.CityComponent
+	            ]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], CityModule);
+	    return CityModule;
+	}());
+	exports.CityModule = CityModule;
+
 
 /***/ },
 
@@ -141,13 +185,902 @@ webpackJsonp([0],{
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
 	var core_1 = __webpack_require__(3);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
-	var circle_manager_1 = __webpack_require__(359);
-	var info_window_manager_1 = __webpack_require__(360);
-	var marker_manager_1 = __webpack_require__(361);
-	var polygon_manager_1 = __webpack_require__(362);
-	var polyline_manager_1 = __webpack_require__(363);
+	var city_1 = __webpack_require__(357);
+	var CityComponent = (function () {
+	    function CityComponent() {
+	        this.favorite = new core_1.EventEmitter();
+	        this.remove = new core_1.EventEmitter();
+	    }
+	    CityComponent.prototype.onStarClick = function () {
+	        this.favorite.emit(!this.isFavorite);
+	    };
+	    CityComponent.prototype.onRemove = function () {
+	        this.remove.emit(this.city.name);
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', city_1.City)
+	    ], CityComponent.prototype, "city", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isDisplayLetter", void 0);
+	    __decorate([
+	        core_1.Input('actions'), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isWithActions", void 0);
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Boolean)
+	    ], CityComponent.prototype, "isFavorite", void 0);
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], CityComponent.prototype, "favorite", void 0);
+	    __decorate([
+	        core_1.Output(), 
+	        __metadata('design:type', Object)
+	    ], CityComponent.prototype, "remove", void 0);
+	    CityComponent = __decorate([
+	        core_1.Component({
+	            selector: 'city',
+	            templateUrl: './app/Components/City/city.component.html',
+	            styleUrls: ['./app/Components/City/city.component.css'],
+	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], CityComponent);
+	    return CityComponent;
+	}());
+	exports.CityComponent = CityComponent;
+
+
+/***/ },
+
+/***/ 357:
+/***/ function(module, exports) {
+
+	"use strict";
+	var City = (function () {
+	    function City() {
+	    }
+	    return City;
+	}());
+	exports.City = City;
+
+
+/***/ },
+
+/***/ 358:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var wind_1 = __webpack_require__(359);
+	var WindComponent = (function () {
+	    function WindComponent() {
+	    }
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', wind_1.Wind)
+	    ], WindComponent.prototype, "wind", void 0);
+	    WindComponent = __decorate([
+	        core_1.Component({
+	            selector: 'wind',
+	            templateUrl: './app/Components/Wind/wind.component.html',
+	            styleUrls: ['./app/Components/Wind/wind.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], WindComponent);
+	    return WindComponent;
+	}());
+	exports.WindComponent = WindComponent;
+
+
+/***/ },
+
+/***/ 359:
+/***/ function(module, exports) {
+
+	"use strict";
+	var Wind = (function () {
+	    function Wind() {
+	    }
+	    return Wind;
+	}());
+	exports.Wind = Wind;
+
+
+/***/ },
+
+/***/ 360:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var WeatherIconComponent = (function () {
+	    function WeatherIconComponent() {
+	        this.iconUrl = 'http://openweathermap.org/img/w/';
+	    }
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', String)
+	    ], WeatherIconComponent.prototype, "icon", void 0);
+	    WeatherIconComponent = __decorate([
+	        core_1.Component({
+	            selector: 'weather-icon',
+	            templateUrl: './app/Components/WeatherIcon/weatherIcon.component.html',
+	            styleUrls: ['./app/Components/WeatherIcon/weatherIcon.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], WeatherIconComponent);
+	    return WeatherIconComponent;
+	}());
+	exports.WeatherIconComponent = WeatherIconComponent;
+
+
+/***/ },
+
+/***/ 361:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var Kelvin2celsiusPipe = (function () {
+	    function Kelvin2celsiusPipe() {
+	        this.kelvin2celsius = 273.15;
+	    }
+	    Kelvin2celsiusPipe.prototype.transform = function (value) {
+	        return Math.round(value - this.kelvin2celsius);
+	    };
+	    Kelvin2celsiusPipe = __decorate([
+	        core_1.Pipe({ name: 'kelvin2celsius' }), 
+	        __metadata('design:paramtypes', [])
+	    ], Kelvin2celsiusPipe);
+	    return Kelvin2celsiusPipe;
+	}());
+	exports.Kelvin2celsiusPipe = Kelvin2celsiusPipe;
+
+
+/***/ },
+
+/***/ 362:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var TemperaturePipe = (function () {
+	    function TemperaturePipe() {
+	    }
+	    TemperaturePipe.prototype.transform = function (value) {
+	        return (value > 0 ? '+' : '') + value.toString();
+	    };
+	    TemperaturePipe = __decorate([
+	        core_1.Pipe({ name: 'temperature' }), 
+	        __metadata('design:paramtypes', [])
+	    ], TemperaturePipe);
+	    return TemperaturePipe;
+	}());
+	exports.TemperaturePipe = TemperaturePipe;
+
+
+/***/ },
+
+/***/ 363:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var TempColor = (function () {
+	    function TempColor(temp, color) {
+	        this.temp = temp;
+	        this.color = color;
+	    }
+	    return TempColor;
+	}());
+	var TempcolorDirective = (function () {
+	    function TempcolorDirective(el) {
+	        this.el = el;
+	    }
+	    TempcolorDirective.prototype.ngOnInit = function () {
+	        var color;
+	        if (this.tempColor < 0) {
+	            color = Math.max(0xFF + this.tempColor * 0x5, 0x30);
+	        }
+	        else {
+	            color = 0xFF0000 + Math.max(0x0, 0x60 - this.tempColor * 0x3) * 0x100 - Math.min(0, 0x60 - this.tempColor * 0x3);
+	        }
+	        this.el.nativeElement.style.color = ('0000' + color.toString(16)).slice(-6);
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Number)
+	    ], TempcolorDirective.prototype, "tempColor", void 0);
+	    TempcolorDirective = __decorate([
+	        core_1.Directive({
+	            selector: '[tempColor]'
+	        }), 
+	        __metadata('design:paramtypes', [core_1.ElementRef])
+	    ], TempcolorDirective);
+	    return TempcolorDirective;
+	}());
+	exports.TempcolorDirective = TempcolorDirective;
+
+
+/***/ },
+
+/***/ 364:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var RotateDirective = (function () {
+	    function RotateDirective(el) {
+	        this.el = el;
+	        this.rotate = 0;
+	    }
+	    RotateDirective.prototype.ngOnInit = function () {
+	        this.el.nativeElement.style.transform = "rotate(" + this.rotate + "deg)";
+	    };
+	    __decorate([
+	        core_1.Input(), 
+	        __metadata('design:type', Number)
+	    ], RotateDirective.prototype, "rotate", void 0);
+	    RotateDirective = __decorate([
+	        core_1.Directive({
+	            selector: '[rotate]'
+	        }), 
+	        __metadata('design:paramtypes', [core_1.ElementRef])
+	    ], RotateDirective);
+	    return RotateDirective;
+	}());
+	exports.RotateDirective = RotateDirective;
+
+
+/***/ },
+
+/***/ 365:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var location_service_1 = __webpack_require__(366);
+	var weather_service_1 = __webpack_require__(370);
+	var logger_service_1 = __webpack_require__(367);
+	var statusMessage_1 = __webpack_require__(368);
+	var CitiesComponent = (function () {
+	    function CitiesComponent(locationService, weatherService, loggerService, changeDetector) {
+	        this.locationService = locationService;
+	        this.weatherService = weatherService;
+	        this.loggerService = loggerService;
+	        this.changeDetector = changeDetector;
+	        this.componentName = 'Cities component';
+	        this.firstLetter = '';
+	        this.favoriteId = -1;
+	        this.isContinueRefresh = true;
+	    }
+	    CitiesComponent.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.locationService.getCenterCoord().subscribe(function (coord) {
+	            _this.centerCoord = coord;
+	            _this.loggerService.log(_this.componentName, 'Get geo coordinates', statusMessage_1.StatusMessage.Info);
+	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function (cities) {
+	                _this.cities = cities;
+	                _this.timeRequest = _this.weatherService.timeLastRequest;
+	                _this.changeDetector.markForCheck();
+	                _this.loggerService.log(_this.componentName, 'Get cities weather', statusMessage_1.StatusMessage.Info);
+	                //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
+	                var self = _this;
+	                self.timerRefreshId = setTimeout(function tick() {
+	                    self.weatherService.getCitiesWeatherByIds(self.cities).subscribe(function (cities) {
+	                        if (self.isContinueRefresh) {
+	                            cities.forEach(function (city) {
+	                                var index = self.cities.findIndex(function (c) { return c.id === city.id; });
+	                                if (index > -1) {
+	                                    self.cities[index] = Object.assign({}, city);
+	                                }
+	                            });
+	                            self.timeRequest = self.weatherService.timeLastRequestIds;
+	                            self.timerRefreshId = setTimeout(tick, 5000);
+	                            self.changeDetector.markForCheck();
+	                            self.loggerService.log(self.componentName, 'Refresh cities weather', statusMessage_1.StatusMessage.Info);
+	                        }
+	                    });
+	                }, 5000);
+	            });
+	        });
+	    };
+	    CitiesComponent.prototype.isNewLetter = function (letter) {
+	        var isDifferent = this.firstLetter !== letter;
+	        this.firstLetter = letter;
+	        return isDifferent;
+	    };
+	    CitiesComponent.prototype.onFavorite = function (isFavorite, index) {
+	        if (isFavorite) {
+	            this.favoriteId = this.cities[index].id;
+	            this.loggerService.log(this.componentName, "Set city " + this.cities[index].name + " as favorite", statusMessage_1.StatusMessage.Info);
+	        }
+	        else {
+	            this.favoriteId = -1;
+	            this.loggerService.log(this.componentName, "There is not favorite city", statusMessage_1.StatusMessage.Info);
+	        }
+	    };
+	    CitiesComponent.prototype.onRemove = function (name, index) {
+	        if (this.cities[index].id === this.favoriteId) {
+	            this.favoriteId = -1;
+	        }
+	        this.cities.splice(index, 1);
+	        this.loggerService.log(this.componentName, "Delete city " + name, statusMessage_1.StatusMessage.Info);
+	    };
+	    CitiesComponent.prototype.addCity = function (name) {
+	        var _this = this;
+	        if (name) {
+	            name = name.trim().toUpperCase();
+	            this.weatherService.getCityWeatherByName(name, '').subscribe(function (city) {
+	                var currentIndex = _this.cities.findIndex(function (c) { return c.name === city.name; });
+	                if (currentIndex < 0) {
+	                    currentIndex = _this.cities.findIndex(function (c) { return c.name > city.name; });
+	                    if (currentIndex < 0) {
+	                        _this.cities.push(city);
+	                    }
+	                    else {
+	                        _this.cities.splice(currentIndex, 0, city);
+	                    }
+	                    _this.changeDetector.markForCheck();
+	                    _this.loggerService.log(_this.componentName, "Add city " + city.name, statusMessage_1.StatusMessage.Info);
+	                }
+	            });
+	        }
+	    };
+	    CitiesComponent.prototype.ngOnDestroy = function () {
+	        clearTimeout(this.timerRefreshId);
+	        this.isContinueRefresh = false;
+	        this.loggerService.log(this.componentName, "Destroy component", statusMessage_1.StatusMessage.Info);
+	    };
+	    CitiesComponent = __decorate([
+	        core_1.Component({
+	            selector: 'cities',
+	            templateUrl: './app/Components/Cities/cities.component.html',
+	            styleUrls: ['./app/Components/Cities/cities.component.css'],
+	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
+	        }), 
+	        __metadata('design:paramtypes', [location_service_1.LocationService, weather_service_1.WeatherService, logger_service_1.LoggerService, core_1.ChangeDetectorRef])
+	    ], CitiesComponent);
+	    return CitiesComponent;
+	}());
+	exports.CitiesComponent = CitiesComponent;
+
+
+/***/ },
+
+/***/ 366:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var Observable_1 = __webpack_require__(5);
+	var logger_service_1 = __webpack_require__(367);
+	var cityCoordinates_1 = __webpack_require__(369);
+	var statusMessage_1 = __webpack_require__(368);
+	var LocationService = (function () {
+	    function LocationService(loggerService) {
+	        this.loggerService = loggerService;
+	        this.serviceName = 'Location service';
+	        this.centerCoord = null;
+	    }
+	    LocationService.prototype.getCenterCoord = function () {
+	        var _this = this;
+	        return new Observable_1.Observable(function (observer) {
+	            if (_this.centerCoord == null) {
+	                navigator.geolocation.getCurrentPosition(function (position) {
+	                    _this.centerCoord = new cityCoordinates_1.CityCoordinates(position.coords.latitude, position.coords.longitude);
+	                    observer.next(_this.centerCoord);
+	                    observer.complete();
+	                    _this.loggerService.log(_this.serviceName, 'Get geo coordinates from navigator', statusMessage_1.StatusMessage.Success);
+	                });
+	            }
+	            else {
+	                observer.next(_this.centerCoord);
+	                observer.complete();
+	                _this.loggerService.log(_this.serviceName, 'Get geo coordinates from saved data', statusMessage_1.StatusMessage.Info);
+	            }
+	        });
+	    };
+	    LocationService = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [logger_service_1.LoggerService])
+	    ], LocationService);
+	    return LocationService;
+	}());
+	exports.LocationService = LocationService;
+
+
+/***/ },
+
+/***/ 367:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var statusMessage_1 = __webpack_require__(368);
+	var LoggerService = (function () {
+	    function LoggerService() {
+	    }
+	    LoggerService.prototype.log = function (component, message, status) {
+	        console.log("%c " + component + ": " + message, "color: " + this.getColor(status));
+	    };
+	    LoggerService.prototype.getColor = function (status) {
+	        switch (status) {
+	            case statusMessage_1.StatusMessage.Info:
+	                return 'blue';
+	            case statusMessage_1.StatusMessage.Success:
+	                return 'green';
+	            case statusMessage_1.StatusMessage.Error:
+	                return 'red';
+	            default:
+	                return 'black';
+	        }
+	    };
+	    LoggerService = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [])
+	    ], LoggerService);
+	    return LoggerService;
+	}());
+	exports.LoggerService = LoggerService;
+
+
+/***/ },
+
+/***/ 368:
+/***/ function(module, exports) {
+
+	"use strict";
+	(function (StatusMessage) {
+	    StatusMessage[StatusMessage["Info"] = 0] = "Info";
+	    StatusMessage[StatusMessage["Success"] = 1] = "Success";
+	    StatusMessage[StatusMessage["Error"] = 2] = "Error";
+	})(exports.StatusMessage || (exports.StatusMessage = {}));
+	var StatusMessage = exports.StatusMessage;
+
+
+/***/ },
+
+/***/ 369:
+/***/ function(module, exports) {
+
+	"use strict";
+	var CityCoordinates = (function () {
+	    function CityCoordinates(latitude, longitude) {
+	        this.lat = latitude;
+	        this.lon = longitude;
+	    }
+	    return CityCoordinates;
+	}());
+	exports.CityCoordinates = CityCoordinates;
+
+
+/***/ },
+
+/***/ 370:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var http_1 = __webpack_require__(56);
+	var Observable_1 = __webpack_require__(5);
+	var logger_service_1 = __webpack_require__(367);
+	var statusMessage_1 = __webpack_require__(368);
+	var WeatherService = (function () {
+	    function WeatherService(http, loggerService) {
+	        this.http = http;
+	        this.loggerService = loggerService;
+	        this.serviceName = 'Weather service';
+	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
+	        this.citiesByIdsUrl = 'http://api.openweathermap.org/data/2.5/group';
+	        this.citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
+	        this.countCities = 50;
+	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
+	        this.refreshDataTime = 10 * 60 * 1000;
+	        this.cities = null;
+	        this.timeRequest = null;
+	        this.timeRequestIds = null;
+	    }
+	    Object.defineProperty(WeatherService.prototype, "timeLastRequest", {
+	        get: function () {
+	            return this.timeRequest;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    Object.defineProperty(WeatherService.prototype, "timeLastRequestIds", {
+	        get: function () {
+	            return this.timeRequestIds;
+	        },
+	        enumerable: true,
+	        configurable: true
+	    });
+	    WeatherService.prototype.getCitiesWeather = function (centerCoord) {
+	        var _this = this;
+	        if (this.cities == null
+	            || (new Date()).getTime() - this.timeRequest.getTime() > this.refreshDataTime) {
+	            var params = new http_1.URLSearchParams();
+	            params.set('lat', centerCoord.lat.toString());
+	            params.set('lon', centerCoord.lon.toString());
+	            params.set('cnt', this.countCities.toString());
+	            params.set('appid', this.appid);
+	            return this.http.get(this.citiesInCycleUrl, { search: params })
+	                .map(function (result) {
+	                var citiesInCycle = result.json();
+	                _this.cities = citiesInCycle.list || [];
+	                _this.cities.sort(function (city1, city2) {
+	                    return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
+	                });
+	                _this.timeRequest = new Date();
+	                _this.timeRequestIds = _this.timeRequest;
+	                _this.loggerService.log(_this.serviceName, 'Get cities weather from API', statusMessage_1.StatusMessage.Success);
+	                return _this.cities;
+	            })
+	                .catch(function (error) { _this.loggerService.log(_this.serviceName, 'Error when getting cities weather from API', statusMessage_1.StatusMessage.Error); });
+	        }
+	        else {
+	            return new Observable_1.Observable(function (observer) {
+	                observer.next(_this.cities);
+	                observer.complete();
+	                _this.loggerService.log(_this.serviceName, 'Get cities weather from array', statusMessage_1.StatusMessage.Info);
+	            });
+	        }
+	    };
+	    WeatherService.prototype.getCitiesWeatherByIds = function (cities) {
+	        var _this = this;
+	        if ((new Date()).getTime() - this.timeRequestIds.getTime() < this.refreshDataTime) {
+	            return new Observable_1.Observable(function (observer) {
+	                observer.next(cities);
+	                observer.complete();
+	                _this.loggerService.log(_this.serviceName, "Get cities weather by ids from array", statusMessage_1.StatusMessage.Info);
+	            });
+	        }
+	        var ids = cities.map(function (city) { return city.id; });
+	        var idsMaxCnt = 20, index = 0, params = new http_1.URLSearchParams(), obsArr = [];
+	        params.set('appid', this.appid);
+	        while (ids.length > index * idsMaxCnt) {
+	            params.set('id', ids.slice(index * idsMaxCnt, (index + 1) * idsMaxCnt).join(','));
+	            obsArr.push(this.http.get(this.citiesByIdsUrl, { search: params })
+	                .map(function (result) {
+	                var citiesIds = result.json();
+	                _this.loggerService.log(_this.serviceName, "Get cities weather by ids from " + citiesIds.list[0].name + " to " + citiesIds.list[citiesIds.cnt - 1].name + " from API (inside map)", statusMessage_1.StatusMessage.Success);
+	                return citiesIds.list || [];
+	            })
+	                .catch(function (error) { _this.loggerService.log(_this.serviceName, 'Error when getting cities weather by ids from API (inside map)', statusMessage_1.StatusMessage.Error); }));
+	            index++;
+	        }
+	        return Observable_1.Observable.onErrorResumeNext(obsArr)
+	            .reduce(function (citiesAll, citiesNew) {
+	            citiesAll = citiesAll.concat(citiesNew);
+	            _this.timeRequestIds = new Date();
+	            _this.loggerService.log(_this.serviceName, "Get cities weather by ids from " + citiesNew[0].name + " to " + citiesNew[citiesNew.length - 1].name + " from API (inside reduce)", statusMessage_1.StatusMessage.Info);
+	            return citiesAll;
+	        }, []);
+	    };
+	    WeatherService.prototype.getCityWeatherByName = function (cityName, units) {
+	        var _this = this;
+	        if (units === void 0) { units = 'metric'; }
+	        var params = new http_1.URLSearchParams();
+	        params.set('q', cityName);
+	        params.set('units', units);
+	        params.set('appid', this.appid);
+	        return this.http.get(this.citiyWeatherByNameUrl, { search: params })
+	            .map(function (result) {
+	            var city = result.json();
+	            _this.loggerService.log(_this.serviceName, "Get " + city.name + " city weather from API", statusMessage_1.StatusMessage.Success);
+	            return city;
+	        });
+	    };
+	    WeatherService = __decorate([
+	        core_1.Injectable(), 
+	        __metadata('design:paramtypes', [http_1.Http, logger_service_1.LoggerService])
+	    ], WeatherService);
+	    return WeatherService;
+	}());
+	exports.WeatherService = WeatherService;
+
+
+/***/ },
+
+/***/ 371:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var common_1 = __webpack_require__(22);
+	var city_module_1 = __webpack_require__(355);
+	var citiesAsync_component_1 = __webpack_require__(372);
+	var CitiesAsyncModule = (function () {
+	    function CitiesAsyncModule() {
+	    }
+	    CitiesAsyncModule = __decorate([
+	        core_1.NgModule({
+	            imports: [
+	                common_1.CommonModule,
+	                city_module_1.CityModule
+	            ],
+	            declarations: [
+	                citiesAsync_component_1.CitiesAsyncComponent,
+	            ],
+	            exports: [
+	                citiesAsync_component_1.CitiesAsyncComponent
+	            ]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], CitiesAsyncModule);
+	    return CitiesAsyncModule;
+	}());
+	exports.CitiesAsyncModule = CitiesAsyncModule;
+
+
+/***/ },
+
+/***/ 372:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var location_service_1 = __webpack_require__(366);
+	var weather_service_1 = __webpack_require__(370);
+	var logger_service_1 = __webpack_require__(367);
+	var statusMessage_1 = __webpack_require__(368);
+	var CitiesAsyncComponent = (function () {
+	    function CitiesAsyncComponent(locationService, weatherService, loggerService) {
+	        this.locationService = locationService;
+	        this.weatherService = weatherService;
+	        this.loggerService = loggerService;
+	        this.componentName = 'CitiesAsync component';
+	        this.firstLetter = '';
+	    }
+	    CitiesAsyncComponent.prototype.ngOnInit = function () {
+	        var _this = this;
+	        this.locationService.getCenterCoord().subscribe(function (coord) {
+	            _this.centerCoord = coord;
+	            _this.loggerService.log(_this.componentName, "Get geo coordinates", statusMessage_1.StatusMessage.Info);
+	            _this.$cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
+	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function () {
+	                _this.timeRequest = _this.weatherService.timeLastRequest;
+	            });
+	        });
+	    };
+	    CitiesAsyncComponent.prototype.isNewLetter = function (letter) {
+	        var isDifferent = this.firstLetter !== letter;
+	        this.firstLetter = letter;
+	        return isDifferent;
+	    };
+	    CitiesAsyncComponent = __decorate([
+	        core_1.Component({
+	            selector: 'cities-async',
+	            templateUrl: './app/Components/CitiesAsync/citiesAsync.component.html',
+	            styleUrls: ['./app/Components/CitiesAsync/citiesAsync.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [location_service_1.LocationService, weather_service_1.WeatherService, logger_service_1.LoggerService])
+	    ], CitiesAsyncComponent);
+	    return CitiesAsyncComponent;
+	}());
+	exports.CitiesAsyncComponent = CitiesAsyncComponent;
+
+
+/***/ },
+
+/***/ 373:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var core_2 = __webpack_require__(374);
+	var map_component_1 = __webpack_require__(395);
+	var MapModule = (function () {
+	    function MapModule() {
+	    }
+	    MapModule = __decorate([
+	        core_1.NgModule({
+	            imports: [
+	                core_2.AgmCoreModule.forRoot({
+	                    apiKey: 'AIzaSyDatH1l956GXlJ4vu1EfVfJSGoKni2-Lxk'
+	                })
+	            ],
+	            declarations: [
+	                map_component_1.MapComponent,
+	            ],
+	            exports: [
+	                map_component_1.MapComponent
+	            ]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], MapModule);
+	    return MapModule;
+	}());
+	exports.MapModule = MapModule;
+
+
+/***/ },
+
+/***/ 374:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	function __export(m) {
+	    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+	}
+	// main modules
+	__export(__webpack_require__(375));
+	__export(__webpack_require__(390));
+	// Google Maps types
+	// core module
+	// we explicitly export the module here to prevent this Ionic 2 bug:
+	// http://stevemichelotti.com/integrate-angular-2-google-maps-into-ionic-2/
+	var core_module_1 = __webpack_require__(394);
+	exports.AgmCoreModule = core_module_1.AgmCoreModule;
+	//# sourceMappingURL=index.js.map
+
+/***/ },
+
+/***/ 375:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var google_map_1 = __webpack_require__(376);
+	exports.SebmGoogleMap = google_map_1.SebmGoogleMap;
+	var google_map_circle_1 = __webpack_require__(384);
+	exports.SebmGoogleMapCircle = google_map_circle_1.SebmGoogleMapCircle;
+	var google_map_info_window_1 = __webpack_require__(385);
+	exports.SebmGoogleMapInfoWindow = google_map_info_window_1.SebmGoogleMapInfoWindow;
+	var google_map_marker_1 = __webpack_require__(386);
+	exports.SebmGoogleMapMarker = google_map_marker_1.SebmGoogleMapMarker;
+	var google_map_polygon_1 = __webpack_require__(387);
+	exports.SebmGoogleMapPolygon = google_map_polygon_1.SebmGoogleMapPolygon;
+	var google_map_polyline_1 = __webpack_require__(388);
+	exports.SebmGoogleMapPolyline = google_map_polyline_1.SebmGoogleMapPolyline;
+	var google_map_polyline_point_1 = __webpack_require__(389);
+	exports.SebmGoogleMapPolylinePoint = google_map_polyline_point_1.SebmGoogleMapPolylinePoint;
+	//# sourceMappingURL=directives.js.map
+
+/***/ },
+
+/***/ 376:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var core_1 = __webpack_require__(3);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
+	var circle_manager_1 = __webpack_require__(379);
+	var info_window_manager_1 = __webpack_require__(380);
+	var marker_manager_1 = __webpack_require__(381);
+	var polygon_manager_1 = __webpack_require__(382);
+	var polyline_manager_1 = __webpack_require__(383);
 	/**
 	 * SebMGoogleMap renders a Google Map.
 	 * **Important note**: To be able see a map in the browser, you have to define a height for the CSS
@@ -454,13 +1387,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 357:
+/***/ 377:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
 	var Observable_1 = __webpack_require__(5);
-	var maps_api_loader_1 = __webpack_require__(358);
+	var maps_api_loader_1 = __webpack_require__(378);
 	/**
 	 * Wrapper class that handles the communication with the Google Maps Javascript
 	 * API v3
@@ -581,7 +1514,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 358:
+/***/ 378:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -601,13 +1534,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 359:
+/***/ 379:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
 	var Observable_1 = __webpack_require__(5);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
 	var CircleManager = (function () {
 	    function CircleManager(_apiWrapper, _zone) {
 	        this._apiWrapper = _apiWrapper;
@@ -706,13 +1639,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 360:
+/***/ 380:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
-	var marker_manager_1 = __webpack_require__(361);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
+	var marker_manager_1 = __webpack_require__(381);
 	var InfoWindowManager = (function () {
 	    function InfoWindowManager(_mapsWrapper, _zone, _markerManager) {
 	        this._mapsWrapper = _mapsWrapper;
@@ -789,13 +1722,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 361:
+/***/ 381:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
 	var Observable_1 = __webpack_require__(5);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
 	var MarkerManager = (function () {
 	    function MarkerManager(_mapsWrapper, _zone) {
 	        this._mapsWrapper = _mapsWrapper;
@@ -879,13 +1812,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 362:
+/***/ 382:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
 	var Observable_1 = __webpack_require__(5);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
 	var PolygonManager = (function () {
 	    function PolygonManager(_mapsWrapper, _zone) {
 	        this._mapsWrapper = _mapsWrapper;
@@ -956,13 +1889,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 363:
+/***/ 383:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
 	var Observable_1 = __webpack_require__(5);
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
 	var PolylineManager = (function () {
 	    function PolylineManager(_mapsWrapper, _zone) {
 	        this._mapsWrapper = _mapsWrapper;
@@ -1039,12 +1972,12 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 364:
+/***/ 384:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var circle_manager_1 = __webpack_require__(359);
+	var circle_manager_1 = __webpack_require__(379);
 	var SebmGoogleMapCircle = (function () {
 	    function SebmGoogleMapCircle(_manager) {
 	        this._manager = _manager;
@@ -1242,12 +2175,12 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 365:
+/***/ 385:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var info_window_manager_1 = __webpack_require__(360);
+	var info_window_manager_1 = __webpack_require__(380);
 	var infoWindowId = 0;
 	/**
 	 * SebmGoogleMapInfoWindow renders a info window inside a {@link SebmGoogleMapMarker} or standalone.
@@ -1363,13 +2296,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 366:
+/***/ 386:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var marker_manager_1 = __webpack_require__(361);
-	var google_map_info_window_1 = __webpack_require__(365);
+	var marker_manager_1 = __webpack_require__(381);
+	var google_map_info_window_1 = __webpack_require__(385);
 	var markerId = 0;
 	/**
 	 * SebmGoogleMapMarker renders a map marker inside a {@link SebmGoogleMap}.
@@ -1543,12 +2476,12 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 367:
+/***/ 387:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var polygon_manager_1 = __webpack_require__(362);
+	var polygon_manager_1 = __webpack_require__(382);
 	/**
 	 * SebmGoogleMapPolygon renders a polygon on a {@link SebmGoogleMap}
 	 *
@@ -1776,13 +2709,13 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 368:
+/***/ 388:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var polyline_manager_1 = __webpack_require__(363);
-	var google_map_polyline_point_1 = __webpack_require__(369);
+	var polyline_manager_1 = __webpack_require__(383);
+	var google_map_polyline_point_1 = __webpack_require__(389);
 	var polylineId = 0;
 	/**
 	 * SebmGoogleMapPolyline renders a polyline on a {@link SebmGoogleMap}
@@ -1987,7 +2920,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 369:
+/***/ 389:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2029,35 +2962,35 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 370:
+/***/ 390:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var google_maps_api_wrapper_1 = __webpack_require__(357);
+	var google_maps_api_wrapper_1 = __webpack_require__(377);
 	exports.GoogleMapsAPIWrapper = google_maps_api_wrapper_1.GoogleMapsAPIWrapper;
-	var circle_manager_1 = __webpack_require__(359);
+	var circle_manager_1 = __webpack_require__(379);
 	exports.CircleManager = circle_manager_1.CircleManager;
-	var info_window_manager_1 = __webpack_require__(360);
+	var info_window_manager_1 = __webpack_require__(380);
 	exports.InfoWindowManager = info_window_manager_1.InfoWindowManager;
-	var marker_manager_1 = __webpack_require__(361);
+	var marker_manager_1 = __webpack_require__(381);
 	exports.MarkerManager = marker_manager_1.MarkerManager;
-	var polygon_manager_1 = __webpack_require__(362);
+	var polygon_manager_1 = __webpack_require__(382);
 	exports.PolygonManager = polygon_manager_1.PolygonManager;
-	var polyline_manager_1 = __webpack_require__(363);
+	var polyline_manager_1 = __webpack_require__(383);
 	exports.PolylineManager = polyline_manager_1.PolylineManager;
-	var lazy_maps_api_loader_1 = __webpack_require__(371);
+	var lazy_maps_api_loader_1 = __webpack_require__(391);
 	exports.GoogleMapsScriptProtocol = lazy_maps_api_loader_1.GoogleMapsScriptProtocol;
 	exports.LAZY_MAPS_API_CONFIG = lazy_maps_api_loader_1.LAZY_MAPS_API_CONFIG;
 	exports.LazyMapsAPILoader = lazy_maps_api_loader_1.LazyMapsAPILoader;
-	var maps_api_loader_1 = __webpack_require__(358);
+	var maps_api_loader_1 = __webpack_require__(378);
 	exports.MapsAPILoader = maps_api_loader_1.MapsAPILoader;
-	var noop_maps_api_loader_1 = __webpack_require__(373);
+	var noop_maps_api_loader_1 = __webpack_require__(393);
 	exports.NoOpMapsAPILoader = noop_maps_api_loader_1.NoOpMapsAPILoader;
 	//# sourceMappingURL=services.js.map
 
 /***/ },
 
-/***/ 371:
+/***/ 391:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2067,8 +3000,8 @@ webpackJsonp([0],{
 	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 	};
 	var core_1 = __webpack_require__(3);
-	var browser_globals_1 = __webpack_require__(372);
-	var maps_api_loader_1 = __webpack_require__(358);
+	var browser_globals_1 = __webpack_require__(392);
+	var maps_api_loader_1 = __webpack_require__(378);
 	(function (GoogleMapsScriptProtocol) {
 	    GoogleMapsScriptProtocol[GoogleMapsScriptProtocol["HTTP"] = 1] = "HTTP";
 	    GoogleMapsScriptProtocol[GoogleMapsScriptProtocol["HTTPS"] = 2] = "HTTPS";
@@ -2166,7 +3099,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 372:
+/***/ 392:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2189,7 +3122,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 373:
+/***/ 393:
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2215,22 +3148,22 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 374:
+/***/ 394:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var core_1 = __webpack_require__(3);
-	var google_map_1 = __webpack_require__(356);
-	var google_map_circle_1 = __webpack_require__(364);
-	var google_map_info_window_1 = __webpack_require__(365);
-	var google_map_marker_1 = __webpack_require__(366);
-	var google_map_polygon_1 = __webpack_require__(367);
-	var google_map_polyline_1 = __webpack_require__(368);
-	var google_map_polyline_point_1 = __webpack_require__(369);
-	var lazy_maps_api_loader_1 = __webpack_require__(371);
-	var lazy_maps_api_loader_2 = __webpack_require__(371);
-	var maps_api_loader_1 = __webpack_require__(358);
-	var browser_globals_1 = __webpack_require__(372);
+	var google_map_1 = __webpack_require__(376);
+	var google_map_circle_1 = __webpack_require__(384);
+	var google_map_info_window_1 = __webpack_require__(385);
+	var google_map_marker_1 = __webpack_require__(386);
+	var google_map_polygon_1 = __webpack_require__(387);
+	var google_map_polyline_1 = __webpack_require__(388);
+	var google_map_polyline_point_1 = __webpack_require__(389);
+	var lazy_maps_api_loader_1 = __webpack_require__(391);
+	var lazy_maps_api_loader_2 = __webpack_require__(391);
+	var maps_api_loader_1 = __webpack_require__(378);
+	var browser_globals_1 = __webpack_require__(392);
 	/**
 	 * @internal
 	 */
@@ -2273,7 +3206,215 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 375:
+/***/ 395:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var location_service_1 = __webpack_require__(366);
+	var weather_service_1 = __webpack_require__(370);
+	var logger_service_1 = __webpack_require__(367);
+	var cityCoordinates_1 = __webpack_require__(369);
+	var statusMessage_1 = __webpack_require__(368);
+	var MapComponent = (function () {
+	    function MapComponent(locationService, weatherService, loggerService) {
+	        var _this = this;
+	        this.locationService = locationService;
+	        this.weatherService = weatherService;
+	        this.loggerService = loggerService;
+	        this.componentName = 'Map component';
+	        this.centerCoord = new cityCoordinates_1.CityCoordinates(0, 0);
+	        locationService.getCenterCoord().subscribe(function (coord) {
+	            _this.centerCoord = coord;
+	            _this.loggerService.log(_this.componentName, 'Get geo coordinates', statusMessage_1.StatusMessage.Info);
+	        });
+	    }
+	    MapComponent = __decorate([
+	        core_1.Component({
+	            selector: 'map',
+	            templateUrl: './app/Components/Map/map.component.html',
+	            styleUrls: ['./app/Components/Map/map.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [location_service_1.LocationService, weather_service_1.WeatherService, logger_service_1.LoggerService])
+	    ], MapComponent);
+	    return MapComponent;
+	}());
+	exports.MapComponent = MapComponent;
+
+
+/***/ },
+
+/***/ 396:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var weatherInCity_component_1 = __webpack_require__(397);
+	var weather_pipe_1 = __webpack_require__(398);
+	var WeatherInCityModule = (function () {
+	    function WeatherInCityModule() {
+	    }
+	    WeatherInCityModule = __decorate([
+	        core_1.NgModule({
+	            declarations: [
+	                weatherInCity_component_1.WeatherInCityComponent,
+	                weather_pipe_1.WeatherPipe,
+	            ],
+	            exports: [
+	                weatherInCity_component_1.WeatherInCityComponent
+	            ]
+	        }), 
+	        __metadata('design:paramtypes', [])
+	    ], WeatherInCityModule);
+	    return WeatherInCityModule;
+	}());
+	exports.WeatherInCityModule = WeatherInCityModule;
+
+
+/***/ },
+
+/***/ 397:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var logger_service_1 = __webpack_require__(367);
+	var statusMessage_1 = __webpack_require__(368);
+	var WeatherInCityComponent = (function () {
+	    function WeatherInCityComponent(loggerService) {
+	        this.loggerService = loggerService;
+	        this.componentName = 'WeatherInCity component';
+	    }
+	    WeatherInCityComponent.prototype.refreshName = function (cityName) {
+	        if (cityName) {
+	            this.cityName = cityName;
+	            this.loggerService.log(this.componentName, 'Click on "Get weather" button', statusMessage_1.StatusMessage.Info);
+	        }
+	    };
+	    WeatherInCityComponent = __decorate([
+	        core_1.Component({
+	            selector: 'weather-in-city',
+	            templateUrl: './app/Components/WeatherInCity/weatherInCity.component.html',
+	            styleUrls: ['./app/Components/WeatherInCity/weatherInCity.component.css']
+	        }), 
+	        __metadata('design:paramtypes', [logger_service_1.LoggerService])
+	    ], WeatherInCityComponent);
+	    return WeatherInCityComponent;
+	}());
+	exports.WeatherInCityComponent = WeatherInCityComponent;
+
+
+/***/ },
+
+/***/ 398:
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+	    return c > 3 && r && Object.defineProperty(target, key, r), r;
+	};
+	var __metadata = (this && this.__metadata) || function (k, v) {
+	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+	};
+	var core_1 = __webpack_require__(3);
+	var weather_service_1 = __webpack_require__(370);
+	var logger_service_1 = __webpack_require__(367);
+	var statusMessage_1 = __webpack_require__(368);
+	var CityWeather = (function () {
+	    function CityWeather(name, city, timeRequest, isRequestGoes) {
+	        if (city === void 0) { city = null; }
+	        if (timeRequest === void 0) { timeRequest = null; }
+	        if (isRequestGoes === void 0) { isRequestGoes = false; }
+	        this.name = name;
+	        this.city = city;
+	        this.timeRequest = timeRequest;
+	        this.isRequestGoes = isRequestGoes;
+	    }
+	    return CityWeather;
+	}());
+	var WeatherPipe = (function () {
+	    function WeatherPipe(weatherService, loggerService) {
+	        this.weatherService = weatherService;
+	        this.loggerService = loggerService;
+	        this.pipeName = 'Weather pipe';
+	        this.cities = [];
+	    }
+	    WeatherPipe.prototype.transform = function (value) {
+	        var _this = this;
+	        var resultHtml = '';
+	        if (value) {
+	            value = value.trim().toUpperCase();
+	            var cityWeather_1 = this.cities.find(function (cw) { return cw.name === value; });
+	            if (cityWeather_1) {
+	                this.loggerService.log(this.pipeName, "Get " + cityWeather_1.name + " city weather from array", statusMessage_1.StatusMessage.Info);
+	            }
+	            else {
+	                cityWeather_1 = new CityWeather(value);
+	                this.cities.push(cityWeather_1);
+	            }
+	            if (!cityWeather_1.isRequestGoes && (!cityWeather_1.timeRequest || (new Date()).getTime() - cityWeather_1.timeRequest.getTime() > 10 * 60 * 1000)) {
+	                cityWeather_1.isRequestGoes = true;
+	                this.weatherService.getCityWeatherByName(value).subscribe(function (city) {
+	                    cityWeather_1.timeRequest = new Date();
+	                    cityWeather_1.city = city;
+	                    cityWeather_1.isRequestGoes = false;
+	                    _this.loggerService.log(_this.pipeName, "Get " + city.name + " city weather from API", statusMessage_1.StatusMessage.Info);
+	                });
+	            }
+	            if (cityWeather_1 && cityWeather_1.city) {
+	                resultHtml = "<table class=\"weather-table\">\n                                <caption class=\"weather-table-caption\">\n                                    <div>Weather in " + cityWeather_1.city.name + "</div>\n                                    <div>Last refreshed " + (('0' + cityWeather_1.timeRequest.getHours().toString()).slice(-2) + ':' + ('0' + cityWeather_1.timeRequest.getMinutes().toString()).slice(-2)) + "</div>\n                                </caption>\n                                <tbody>\n                                    <tr class=\"weather-table-tr\">\n                                        <td>Temperature</td>\n                                        <td>" + cityWeather_1.city.main.temp.toFixed(0) + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Wind</td>\n                                        <td>" + cityWeather_1.city.wind.speed + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Cloudiness</td>\n                                        <td>" + cityWeather_1.city.clouds.all + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Pressure</td>\n                                        <td>" + cityWeather_1.city.main.pressure + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Humidity</td>\n                                        <td>" + cityWeather_1.city.main.humidity + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Geo coordinates</td>\n                                        <td>[" + cityWeather_1.city.coord.lat.toFixed(2) + ", " + cityWeather_1.city.coord.lon.toFixed(2) + "]</td>\n                                    </tr>\n                                </tbody>\n                            </table>";
+	            }
+	            else {
+	                resultHtml = '<div class="nodata">No data</div>';
+	            }
+	        }
+	        return resultHtml;
+	    };
+	    WeatherPipe = __decorate([
+	        core_1.Pipe({
+	            name: 'weather',
+	            pure: false
+	        }), 
+	        __metadata('design:paramtypes', [weather_service_1.WeatherService, logger_service_1.LoggerService])
+	    ], WeatherPipe);
+	    return WeatherPipe;
+	}());
+	exports.WeatherPipe = WeatherPipe;
+
+
+/***/ },
+
+/***/ 399:
 /***/ function(module, exports, __webpack_require__) {
 
 	/// <reference path="../typings/index.d.ts" />
@@ -2290,7 +3431,6 @@ webpackJsonp([0],{
 	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 	};
 	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
 	var AppComponent = (function () {
 	    function AppComponent(zone, changeDetectorRef) {
 	        this.zone = zone;
@@ -2310,7 +3450,6 @@ webpackJsonp([0],{
 	    AppComponent = __decorate([
 	        core_1.Component({
 	            selector: 'my-app',
-	            providers: [weather_service_1.WeatherService],
 	            templateUrl: './app/app.component.html',
 	            styleUrls: ['./app/app.component.css']
 	        }), 
@@ -2323,566 +3462,7 @@ webpackJsonp([0],{
 
 /***/ },
 
-/***/ 376:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var http_1 = __webpack_require__(56);
-	var Observable_1 = __webpack_require__(5);
-	var cityCoordinates_1 = __webpack_require__(377);
-	var WeatherService = (function () {
-	    function WeatherService(http) {
-	        this.http = http;
-	        this.citiesInCycleUrl = 'http://api.openweathermap.org/data/2.5/find';
-	        this.citiesByIdsUrl = 'http://api.openweathermap.org/data/2.5/group';
-	        this.citiyWeatherByNameUrl = 'http://api.openweathermap.org/data/2.5/weather';
-	        this.countCities = 50;
-	        this.appid = 'f3dbe2c418d2f197d570d0224966b043';
-	        this.refreshDataTime = 10 * 60 * 1000;
-	        this.centerCoord = null;
-	        this.cities = null;
-	        this.timeRequest = null;
-	        this.timeRequestIds = null;
-	    }
-	    Object.defineProperty(WeatherService.prototype, "timeLastRequest", {
-	        get: function () {
-	            return this.timeRequest;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    Object.defineProperty(WeatherService.prototype, "timeLastRequestIds", {
-	        get: function () {
-	            return this.timeRequestIds;
-	        },
-	        enumerable: true,
-	        configurable: true
-	    });
-	    WeatherService.prototype.getCenterCoord = function () {
-	        var _this = this;
-	        return new Observable_1.Observable(function (observer) {
-	            if (_this.centerCoord == null) {
-	                navigator.geolocation.getCurrentPosition(function (position) {
-	                    _this.centerCoord = new cityCoordinates_1.CityCoordinates(position.coords.latitude, position.coords.longitude);
-	                    observer.next(_this.centerCoord);
-	                    observer.complete();
-	                });
-	            }
-	            else {
-	                observer.next(_this.centerCoord);
-	                observer.complete();
-	            }
-	        });
-	    };
-	    WeatherService.prototype.getCitiesWeather = function (centerCoord) {
-	        var _this = this;
-	        if (this.cities == null
-	            || (new Date()).getTime() - this.timeRequest.getTime() > this.refreshDataTime) {
-	            var params = new http_1.URLSearchParams();
-	            params.set('lat', centerCoord.lat.toString());
-	            params.set('lon', centerCoord.lon.toString());
-	            params.set('cnt', this.countCities.toString());
-	            params.set('appid', this.appid);
-	            return this.http.get(this.citiesInCycleUrl, { search: params })
-	                .map(function (result) {
-	                var citiesInCycle = result.json();
-	                _this.cities = citiesInCycle.list || [];
-	                _this.cities.sort(function (city1, city2) {
-	                    return city1.name > city2.name ? 1 : (city1.name < city2.name ? -1 : 0);
-	                });
-	                _this.timeRequest = new Date();
-	                _this.timeRequestIds = _this.timeRequest;
-	                return _this.cities;
-	            });
-	        }
-	        else {
-	            return new Observable_1.Observable(function (observer) {
-	                observer.next(_this.cities);
-	                observer.complete();
-	            });
-	        }
-	    };
-	    WeatherService.prototype.getCitiesWeatherByIds = function (cities) {
-	        var _this = this;
-	        if ((new Date()).getTime() - this.timeRequestIds.getTime() < this.refreshDataTime) {
-	            return new Observable_1.Observable(function (observer) {
-	                observer.next(cities);
-	                observer.complete();
-	            });
-	        }
-	        var ids = cities.map(function (city) { return city.id; });
-	        var idsMaxCnt = 20, index = 0, params = new http_1.URLSearchParams(), obsArr = [];
-	        params.set('appid', this.appid);
-	        while (ids.length > index * idsMaxCnt) {
-	            params.set('id', ids.slice(index * idsMaxCnt, (index + 1) * idsMaxCnt).join(','));
-	            obsArr.push(this.http.get(this.citiesByIdsUrl, { search: params })
-	                .map(function (result) {
-	                var citiesIds = result.json();
-	                return citiesIds.list || [];
-	            }));
-	            index++;
-	        }
-	        return Observable_1.Observable.onErrorResumeNext(obsArr)
-	            .reduce(function (citiesAll, citiesNew) {
-	            citiesAll = citiesAll.concat(citiesNew);
-	            _this.timeRequestIds = new Date();
-	            return citiesAll;
-	        }, []);
-	    };
-	    WeatherService.prototype.getCityWeatherByName = function (cityName, units) {
-	        if (units === void 0) { units = 'metric'; }
-	        var params = new http_1.URLSearchParams();
-	        params.set('q', cityName);
-	        params.set('units', units);
-	        params.set('appid', this.appid);
-	        return this.http.get(this.citiyWeatherByNameUrl, { search: params })
-	            .map(function (result) {
-	            var city = result.json();
-	            return city;
-	        });
-	    };
-	    WeatherService = __decorate([
-	        core_1.Injectable(), 
-	        __metadata('design:paramtypes', [http_1.Http])
-	    ], WeatherService);
-	    return WeatherService;
-	}());
-	exports.WeatherService = WeatherService;
-
-
-/***/ },
-
-/***/ 377:
-/***/ function(module, exports) {
-
-	"use strict";
-	var CityCoordinates = (function () {
-	    function CityCoordinates(latitude, longitude) {
-	        this.lat = latitude;
-	        this.lon = longitude;
-	    }
-	    return CityCoordinates;
-	}());
-	exports.CityCoordinates = CityCoordinates;
-
-
-/***/ },
-
-/***/ 378:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
-	var CitiesComponent = (function () {
-	    function CitiesComponent(weatherService, changeDetector) {
-	        this.weatherService = weatherService;
-	        this.changeDetector = changeDetector;
-	        this.firstLetter = '';
-	        this.favoriteId = -1;
-	        this.isContinueRefresh = true;
-	    }
-	    CitiesComponent.prototype.ngOnInit = function () {
-	        var _this = this;
-	        this.weatherService.getCenterCoord().subscribe(function (coord) {
-	            _this.centerCoord = coord;
-	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function (cities) {
-	                _this.cities = cities;
-	                _this.timeRequest = _this.weatherService.timeLastRequest;
-	                _this.changeDetector.markForCheck();
-	                //4. Add real-time updates (every 5 sec) for weather via detectChanges() method
-	                var self = _this;
-	                self.timerRefreshId = setTimeout(function tick() {
-	                    self.weatherService.getCitiesWeatherByIds(self.cities).subscribe(function (cities) {
-	                        if (self.isContinueRefresh) {
-	                            cities.forEach(function (city) {
-	                                var index = self.cities.findIndex(function (c) { return c.id === city.id; });
-	                                if (index > -1) {
-	                                    self.cities[index] = Object.assign({}, city);
-	                                }
-	                            });
-	                            self.timeRequest = self.weatherService.timeLastRequestIds;
-	                            self.timerRefreshId = setTimeout(tick, 5000);
-	                            self.changeDetector.markForCheck();
-	                        }
-	                    });
-	                }, 5000);
-	            });
-	        });
-	    };
-	    CitiesComponent.prototype.isNewLetter = function (letter) {
-	        var isDifferent = this.firstLetter !== letter;
-	        this.firstLetter = letter;
-	        return isDifferent;
-	    };
-	    CitiesComponent.prototype.onFavorite = function (isFavorite, index) {
-	        if (isFavorite) {
-	            this.favoriteId = this.cities[index].id;
-	        }
-	        else {
-	            this.favoriteId = -1;
-	        }
-	    };
-	    CitiesComponent.prototype.onRemove = function (name, index) {
-	        if (this.cities[index].id === this.favoriteId) {
-	            this.favoriteId = -1;
-	        }
-	        this.cities.splice(index, 1);
-	    };
-	    CitiesComponent.prototype.addCity = function (name) {
-	        var _this = this;
-	        if (name) {
-	            name = name.trim().toUpperCase();
-	            this.weatherService.getCityWeatherByName(name, '').subscribe(function (city) {
-	                var currentIndex = _this.cities.findIndex(function (c) { return c.name === city.name; });
-	                if (currentIndex < 0) {
-	                    currentIndex = _this.cities.findIndex(function (c) { return c.name > city.name; });
-	                    if (currentIndex < 0) {
-	                        _this.cities.push(city);
-	                    }
-	                    else {
-	                        _this.cities.splice(currentIndex, 0, city);
-	                    }
-	                    _this.changeDetector.markForCheck();
-	                }
-	            });
-	        }
-	    };
-	    CitiesComponent.prototype.ngOnDestroy = function () {
-	        clearTimeout(this.timerRefreshId);
-	        this.isContinueRefresh = false;
-	    };
-	    CitiesComponent = __decorate([
-	        core_1.Component({
-	            selector: 'cities',
-	            templateUrl: './app/Components/Cities/cities.component.html',
-	            styleUrls: ['./app/Components/Cities/cities.component.css'],
-	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
-	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService, core_1.ChangeDetectorRef])
-	    ], CitiesComponent);
-	    return CitiesComponent;
-	}());
-	exports.CitiesComponent = CitiesComponent;
-
-
-/***/ },
-
-/***/ 379:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
-	var CitiesAsyncComponent = (function () {
-	    function CitiesAsyncComponent(weatherService) {
-	        this.weatherService = weatherService;
-	        this.firstLetter = '';
-	    }
-	    CitiesAsyncComponent.prototype.ngOnInit = function () {
-	        var _this = this;
-	        this.weatherService.getCenterCoord().subscribe(function (coord) {
-	            _this.centerCoord = coord;
-	            _this.$cities = _this.weatherService.getCitiesWeather(_this.centerCoord);
-	            _this.weatherService.getCitiesWeather(_this.centerCoord).subscribe(function () {
-	                _this.timeRequest = _this.weatherService.timeLastRequest;
-	            });
-	        });
-	    };
-	    CitiesAsyncComponent.prototype.isNewLetter = function (letter) {
-	        var isDifferent = this.firstLetter !== letter;
-	        this.firstLetter = letter;
-	        return isDifferent;
-	    };
-	    CitiesAsyncComponent = __decorate([
-	        core_1.Component({
-	            selector: 'cities-async',
-	            templateUrl: './app/Components/CitiesAsync/citiesAsync.component.html',
-	            styleUrls: ['./app/Components/CitiesAsync/citiesAsync.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
-	    ], CitiesAsyncComponent);
-	    return CitiesAsyncComponent;
-	}());
-	exports.CitiesAsyncComponent = CitiesAsyncComponent;
-
-
-/***/ },
-
-/***/ 380:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var city_1 = __webpack_require__(381);
-	var CityComponent = (function () {
-	    function CityComponent() {
-	        this.favorite = new core_1.EventEmitter();
-	        this.remove = new core_1.EventEmitter();
-	    }
-	    CityComponent.prototype.onStarClick = function () {
-	        this.favorite.emit(!this.isFavorite);
-	    };
-	    CityComponent.prototype.onRemove = function () {
-	        this.remove.emit(this.city.name);
-	    };
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', city_1.City)
-	    ], CityComponent.prototype, "city", void 0);
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', Boolean)
-	    ], CityComponent.prototype, "isDisplayLetter", void 0);
-	    __decorate([
-	        core_1.Input('actions'), 
-	        __metadata('design:type', Boolean)
-	    ], CityComponent.prototype, "isWithActions", void 0);
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', Boolean)
-	    ], CityComponent.prototype, "isFavorite", void 0);
-	    __decorate([
-	        core_1.Output(), 
-	        __metadata('design:type', Object)
-	    ], CityComponent.prototype, "favorite", void 0);
-	    __decorate([
-	        core_1.Output(), 
-	        __metadata('design:type', Object)
-	    ], CityComponent.prototype, "remove", void 0);
-	    CityComponent = __decorate([
-	        core_1.Component({
-	            selector: 'city',
-	            templateUrl: './app/Components/City/city.component.html',
-	            styleUrls: ['./app/Components/City/city.component.css'],
-	            changeDetection: core_1.ChangeDetectionStrategy.OnPush
-	        }), 
-	        __metadata('design:paramtypes', [])
-	    ], CityComponent);
-	    return CityComponent;
-	}());
-	exports.CityComponent = CityComponent;
-
-
-/***/ },
-
-/***/ 381:
-/***/ function(module, exports) {
-
-	"use strict";
-	var City = (function () {
-	    function City() {
-	    }
-	    return City;
-	}());
-	exports.City = City;
-
-
-/***/ },
-
-/***/ 382:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
-	var cityCoordinates_1 = __webpack_require__(377);
-	var MapComponent = (function () {
-	    function MapComponent(weatherService) {
-	        var _this = this;
-	        this.weatherService = weatherService;
-	        this.centerCoord = new cityCoordinates_1.CityCoordinates(0, 0);
-	        weatherService.getCenterCoord().subscribe(function (coord) {
-	            _this.centerCoord = coord;
-	        });
-	    }
-	    MapComponent = __decorate([
-	        core_1.Component({
-	            selector: 'map',
-	            templateUrl: './app/Components/Map/map.component.html',
-	            styleUrls: ['./app/Components/Map/map.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
-	    ], MapComponent);
-	    return MapComponent;
-	}());
-	exports.MapComponent = MapComponent;
-
-
-/***/ },
-
-/***/ 383:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var WeatherInCityComponent = (function () {
-	    function WeatherInCityComponent() {
-	    }
-	    WeatherInCityComponent.prototype.refreshName = function (cityName) {
-	        if (cityName) {
-	            this.cityName = cityName;
-	        }
-	    };
-	    WeatherInCityComponent = __decorate([
-	        core_1.Component({
-	            selector: 'weather-in-city',
-	            templateUrl: './app/Components/WeatherInCity/weatherInCity.component.html',
-	            styleUrls: ['./app/Components/WeatherInCity/weatherInCity.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [])
-	    ], WeatherInCityComponent);
-	    return WeatherInCityComponent;
-	}());
-	exports.WeatherInCityComponent = WeatherInCityComponent;
-
-
-/***/ },
-
-/***/ 384:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var wind_1 = __webpack_require__(385);
-	var WindComponent = (function () {
-	    function WindComponent() {
-	    }
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', wind_1.Wind)
-	    ], WindComponent.prototype, "wind", void 0);
-	    WindComponent = __decorate([
-	        core_1.Component({
-	            selector: 'wind',
-	            templateUrl: './app/Components/Wind/wind.component.html',
-	            styleUrls: ['./app/Components/Wind/wind.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [])
-	    ], WindComponent);
-	    return WindComponent;
-	}());
-	exports.WindComponent = WindComponent;
-
-
-/***/ },
-
-/***/ 385:
-/***/ function(module, exports) {
-
-	"use strict";
-	var Wind = (function () {
-	    function Wind() {
-	    }
-	    return Wind;
-	}());
-	exports.Wind = Wind;
-
-
-/***/ },
-
-/***/ 386:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var WeatherIconComponent = (function () {
-	    function WeatherIconComponent() {
-	        this.iconUrl = 'http://openweathermap.org/img/w/';
-	    }
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', String)
-	    ], WeatherIconComponent.prototype, "icon", void 0);
-	    WeatherIconComponent = __decorate([
-	        core_1.Component({
-	            selector: 'weather-icon',
-	            templateUrl: './app/Components/WeatherIcon/weatherIcon.component.html',
-	            styleUrls: ['./app/Components/WeatherIcon/weatherIcon.component.css']
-	        }), 
-	        __metadata('design:paramtypes', [])
-	    ], WeatherIconComponent);
-	    return WeatherIconComponent;
-	}());
-	exports.WeatherIconComponent = WeatherIconComponent;
-
-
-/***/ },
-
-/***/ 387:
+/***/ 400:
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2909,232 +3489,6 @@ webpackJsonp([0],{
 	    return PageNotFoundComponent;
 	}());
 	exports.PageNotFoundComponent = PageNotFoundComponent;
-
-
-/***/ },
-
-/***/ 388:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var Kelvin2celsiusPipe = (function () {
-	    function Kelvin2celsiusPipe() {
-	        this.kelvin2celsius = 273.15;
-	    }
-	    Kelvin2celsiusPipe.prototype.transform = function (value) {
-	        return Math.round(value - this.kelvin2celsius);
-	    };
-	    Kelvin2celsiusPipe = __decorate([
-	        core_1.Pipe({ name: 'kelvin2celsius' }), 
-	        __metadata('design:paramtypes', [])
-	    ], Kelvin2celsiusPipe);
-	    return Kelvin2celsiusPipe;
-	}());
-	exports.Kelvin2celsiusPipe = Kelvin2celsiusPipe;
-
-
-/***/ },
-
-/***/ 389:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var TemperaturePipe = (function () {
-	    function TemperaturePipe() {
-	    }
-	    TemperaturePipe.prototype.transform = function (value) {
-	        return (value > 0 ? '+' : '') + value.toString();
-	    };
-	    TemperaturePipe = __decorate([
-	        core_1.Pipe({ name: 'temperature' }), 
-	        __metadata('design:paramtypes', [])
-	    ], TemperaturePipe);
-	    return TemperaturePipe;
-	}());
-	exports.TemperaturePipe = TemperaturePipe;
-
-
-/***/ },
-
-/***/ 390:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var weather_service_1 = __webpack_require__(376);
-	var CityWeather = (function () {
-	    function CityWeather(name, city, timeRequest, isRequestGoes) {
-	        if (city === void 0) { city = null; }
-	        if (timeRequest === void 0) { timeRequest = null; }
-	        if (isRequestGoes === void 0) { isRequestGoes = false; }
-	        this.name = name;
-	        this.city = city;
-	        this.timeRequest = timeRequest;
-	        this.isRequestGoes = isRequestGoes;
-	    }
-	    return CityWeather;
-	}());
-	var WeatherPipe = (function () {
-	    function WeatherPipe(weatherService) {
-	        this.weatherService = weatherService;
-	        this.cities = [];
-	    }
-	    WeatherPipe.prototype.transform = function (value) {
-	        var resultHtml = '';
-	        if (value) {
-	            value = value.trim().toUpperCase();
-	            var cityWeather_1 = this.cities.find(function (cw) { return cw.name === value; });
-	            if (!cityWeather_1) {
-	                cityWeather_1 = new CityWeather(value);
-	                this.cities.push(cityWeather_1);
-	            }
-	            if (!cityWeather_1.isRequestGoes && (!cityWeather_1.timeRequest || (new Date()).getTime() - cityWeather_1.timeRequest.getTime() > 10 * 60 * 1000)) {
-	                cityWeather_1.isRequestGoes = true;
-	                this.weatherService.getCityWeatherByName(value).subscribe(function (city) {
-	                    cityWeather_1.timeRequest = new Date();
-	                    cityWeather_1.city = city;
-	                    cityWeather_1.isRequestGoes = false;
-	                });
-	            }
-	            if (cityWeather_1 && cityWeather_1.city) {
-	                resultHtml = "<table class=\"weather-table\">\n                                <caption class=\"weather-table-caption\">\n                                    <div>Weather in " + cityWeather_1.city.name + "</div>\n                                    <div>Last refreshed " + (('0' + cityWeather_1.timeRequest.getHours().toString()).slice(-2) + ':' + ('0' + cityWeather_1.timeRequest.getMinutes().toString()).slice(-2)) + "</div>\n                                </caption>\n                                <tbody>\n                                    <tr class=\"weather-table-tr\">\n                                        <td>Temperature</td>\n                                        <td>" + cityWeather_1.city.main.temp.toFixed(0) + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Wind</td>\n                                        <td>" + cityWeather_1.city.wind.speed + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Cloudiness</td>\n                                        <td>" + cityWeather_1.city.clouds.all + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Pressure</td>\n                                        <td>" + cityWeather_1.city.main.pressure + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Humidity</td>\n                                        <td>" + cityWeather_1.city.main.humidity + "</td>\n                                    </tr>\n                                    <tr>\n                                        <td>Geo coordinates</td>\n                                        <td>[" + cityWeather_1.city.coord.lat.toFixed(2) + ", " + cityWeather_1.city.coord.lon.toFixed(2) + "]</td>\n                                    </tr>\n                                </tbody>\n                            </table>";
-	            }
-	            else {
-	                resultHtml = '<div class="nodata">No data</div>';
-	            }
-	        }
-	        return resultHtml;
-	    };
-	    WeatherPipe = __decorate([
-	        core_1.Pipe({
-	            name: 'weather',
-	            pure: false
-	        }), 
-	        __metadata('design:paramtypes', [weather_service_1.WeatherService])
-	    ], WeatherPipe);
-	    return WeatherPipe;
-	}());
-	exports.WeatherPipe = WeatherPipe;
-
-
-/***/ },
-
-/***/ 391:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var TempColor = (function () {
-	    function TempColor(temp, color) {
-	        this.temp = temp;
-	        this.color = color;
-	    }
-	    return TempColor;
-	}());
-	var TempcolorDirective = (function () {
-	    function TempcolorDirective(el) {
-	        this.el = el;
-	    }
-	    TempcolorDirective.prototype.ngOnInit = function () {
-	        var color;
-	        if (this.tempColor < 0) {
-	            color = Math.max(0xFF + this.tempColor * 0x5, 0x30);
-	        }
-	        else {
-	            color = 0xFF0000 + Math.max(0x0, 0x60 - this.tempColor * 0x3) * 0x100 - Math.min(0, 0x60 - this.tempColor * 0x3);
-	        }
-	        this.el.nativeElement.style.color = ('0000' + color.toString(16)).slice(-6);
-	    };
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', Number)
-	    ], TempcolorDirective.prototype, "tempColor", void 0);
-	    TempcolorDirective = __decorate([
-	        core_1.Directive({
-	            selector: '[tempColor]'
-	        }), 
-	        __metadata('design:paramtypes', [core_1.ElementRef])
-	    ], TempcolorDirective);
-	    return TempcolorDirective;
-	}());
-	exports.TempcolorDirective = TempcolorDirective;
-
-
-/***/ },
-
-/***/ 392:
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-	    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-	    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-	    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-	    return c > 3 && r && Object.defineProperty(target, key, r), r;
-	};
-	var __metadata = (this && this.__metadata) || function (k, v) {
-	    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-	};
-	var core_1 = __webpack_require__(3);
-	var RotateDirective = (function () {
-	    function RotateDirective(el) {
-	        this.el = el;
-	        this.rotate = 0;
-	    }
-	    RotateDirective.prototype.ngOnInit = function () {
-	        this.el.nativeElement.style.transform = "rotate(" + this.rotate + "deg)";
-	    };
-	    __decorate([
-	        core_1.Input(), 
-	        __metadata('design:type', Number)
-	    ], RotateDirective.prototype, "rotate", void 0);
-	    RotateDirective = __decorate([
-	        core_1.Directive({
-	            selector: '[rotate]'
-	        }), 
-	        __metadata('design:paramtypes', [core_1.ElementRef])
-	    ], RotateDirective);
-	    return RotateDirective;
-	}());
-	exports.RotateDirective = RotateDirective;
 
 
 /***/ }
