@@ -9,6 +9,7 @@ import 'rxjs/Rx';
 //import 'rxjs/add/operator/catch';
 //import 'rxjs/add/operator/map';
 
+import { CoreModule } from './core.module';
 import { CitiesModule } from './Components/Cities/cities.module';
 import { CitiesAsyncModule } from './Components/CitiesAsync/citiesAsync.module';
 import { MapModule } from './Components/Map/map.module';
@@ -21,10 +22,6 @@ import { CitiesAsyncComponent } from './Components/CitiesAsync/citiesAsync.compo
 import { MapComponent } from './Components/Map/map.component';
 import { WeatherInCityComponent } from './Components/WeatherInCity/weatherInCity.component';
 
-import { LocationService } from './Services/location.service';
-import { WeatherService } from './Services/weather.service';
-import { LoggerService } from './Services/logger.service';
-
 const appRoutes: Routes = [
   { path: 'cities', component: CitiesComponent },
   { path: 'cities-async', component: CitiesAsyncComponent },
@@ -36,7 +33,7 @@ const appRoutes: Routes = [
 
 @NgModule({
   imports: [
-    BrowserModule,
+    CoreModule,
     HttpModule,
     RouterModule.forRoot(appRoutes),
     CitiesModule,
@@ -45,13 +42,7 @@ const appRoutes: Routes = [
     WeatherInCityModule
   ],
   declarations: [
-    AppComponent,
-    PageNotFoundComponent
-  ],
-  providers: [
-    LocationService,
-    WeatherService,
-    LoggerService
+    AppComponent
   ],
   bootstrap: [ AppComponent ]
 })

@@ -1,14 +1,12 @@
 import { NgModule }      from '@angular/core';
-import { CommonModule } from '@angular/common';
 
-import { CityModule } from './../City/city.module';
+import { ShareModule } from './../../share.module';
 
 import { CitiesAsyncComponent } from './citiesAsync.component';
 
 @NgModule({
   imports: [
-    CommonModule,
-    CityModule
+    ShareModule
   ],
   declarations: [
     CitiesAsyncComponent,
